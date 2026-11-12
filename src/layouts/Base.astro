@@ -1,0 +1,103 @@
+---
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '../styles/global.css';
+import profile from '../data/profile.json';
+import Hud from '../components/Hud.astro';
+import font400 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url';
+import font700 from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+}
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const og = new URL('/og.png', Astro.site).href;
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: Astro.site?.href,
+  email: `mailto:${profile.email}`,
+  jobTitle: 'Data Science student seeking an AI/LLM Engineer internship',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Indian Institute of Technology Madras' },
+  address: { '@type': 'PostalAddress', addressLocality: 'Ambala', addressRegion: 'Haryana', addressCountry: 'IN' },
+  sameAs: [profile.links.github, profile.links.linkedin],
+};
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const nav = [
+  { href: '/#projects', label: '~/projects' },
+  { href: '/#skills', label: '~/skills' },
+  { href: '/lab/spectrogram/', label: '~/lab' },
+  { href: '/resume/', label: 'resume' },
+  { href: '/#contact', label: 'contact' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0b0f0c" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="preload" href={font400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={font700} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    <script is:inline>
+      try {
+        var s = localStorage;
+        if (s.getItem('kb.glow') === 'off') document.documentElement.dataset.glow = 'off';
+        if (s.getItem('kb.motion') === 'paused') document.documentElement.dataset.motion = 'paused';
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/">kbxai<span class="blink" aria-hidden="true">_</span></a>
+        <nav aria-label="Main">
+          {nav.map((n) => (
+            <a class="nav" href={n.href} aria-current={path === n.href.replace(/\/$/, '') ? 'page' : undefined}>{n.label}</a>
+          ))}
+        </nav>
+        <button class="ctl" type="button" id="motion-toggle" aria-pressed="false" style="visibility:hidden">pause motion</button>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site">
+      <div class="wrap">
+        <p>
+          {profile.name} | <a href={`mailto:${profile.email}`}>{profile.email}</a> |
+          <a href={profile.links.github}>github</a> | <a href={profile.links.linkedin}>linkedin</a>
+        </p>
+        <p class="muted">Built with Astro and three.js, with AI coding tools. Every number on this site is checked against my resume at build time.</p>
+        <Hud />
+      </div>
+    </footer>
+    <script>
+      import { initMotionToggle } from '../lib/motion';
+      initMotionToggle();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "kbxai-portfolio-ascii",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "sync:resume": "node scripts/sync-resume.mjs",
+    "fetch:github": "node scripts/fetch-github.mjs",
+    "check:facts": "node scripts/check-facts.mjs",
+    "build:knowledge": "node scripts/build-knowledge.mjs",
+    "build": "npm run fetch:github && npm run check:facts && npm run build:knowledge && astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "e2e": "python tests/e2e/run_e2e.py"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "astro": "7.4.11",
+    "three": "0.187.0",
+    "web-vitals": "6.2.3"
+  },
+  "devDependencies": {
+    "@types/three": "0.187.0",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

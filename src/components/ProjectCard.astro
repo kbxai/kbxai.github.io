@@ -1,0 +1,21 @@
+---
+interface Project {
+  slug: string; title: string; context: string; dates: string; stack: string[];
+  metric: { label: string; value: string }; summary: string; links: { demo?: string; github: string };
+}
+interface Props { project: Project; thumb?: { src: string; width: number; height: number } | null }
+const { project: p, thumb } = Astro.props;
+---
+<article class="card">
+  {thumb && <img src={thumb.src} width={thumb.width} height={thumb.height} alt="" loading="lazy" decoding="async" />}
+  <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
+  <p class="ctx">{p.context} | {p.dates}</p>
+  <p><span class="metric">{p.metric.label === 'live' ? `[live] ${p.metric.value}` : `${p.metric.label} ${p.metric.value}`}</span></p>
+  <p>{p.summary}</p>
+  <ul class="tags" aria-label="Stack">{p.stack.map((s) => <li>{s}</li>)}</ul>
+  <p class="links">
+    {p.links.demo && <a href={p.links.demo}>[live demo]<span class="sr-only"> for {p.title}</span></a>}
+    <a href={p.links.github}>[github]<span class="sr-only"> repository for {p.title}</span></a>
+    <a href={`/projects/${p.slug}/`}>[man page]<span class="sr-only"> details for {p.title}</span></a>
+  </p>
+</article>

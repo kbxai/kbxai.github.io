@@ -1,0 +1,49 @@
+---
+import { existsSync } from 'node:fs';
+import Base from '../layouts/Base.astro';
+import Prompt from '../components/Prompt.astro';
+import profile from '../data/profile.json';
+import projects from '../data/projects.json';
+const hasPdf = existsSync(new URL('../../public/resume.pdf', import.meta.url));
+---
+<Base title="Resume | Kartik Bajaj" description="Resume of Kartik Bajaj: IIT Madras BS Data Science, seeking an AI/LLM Engineer internship.">
+  <article class="wrap cv" aria-labelledby="cv-title">
+    <Prompt cmd="cat resume.txt" />
+    <h1 id="cv-title">{profile.name}</h1>
+    <p><strong>{profile.headline}</strong></p>
+    <p class="muted">{profile.availability}</p>
+    <p>{profile.location} | <a href={`mailto:${profile.email}`}>{profile.email}</a> | <a href={profile.phoneHref}>{profile.phone}</a> | <a href={profile.links.github}>github.com/kbxai</a> | <a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></p>
+    {hasPdf && <p class="actions"><a class="btn" href="/resume.pdf" download>download PDF</a></p>}
+
+    <h2>Education</h2>
+    {profile.education.map((e) => (<div class="item"><h3>{e.institution}, {e.degree} <span class="muted">| {e.dates}</span></h3><p>{e.detail}</p></div>))}
+    <p><span class="muted">Coursework:</span> {profile.coursework.join(', ')}</p>
+
+    <h2>Projects</h2>
+    {projects.map((p) => (
+      <div class="item">
+        <h3><a href={`/projects/${p.slug}/`}>{p.title}</a> <span class="muted">| {p.context} | {p.dates}</span></h3>
+        <p class="muted">{p.stack.join(', ')} | <a href={p.links.github}>github</a>{p.links.demo && <> | <a href={p.links.demo}>live demo</a></>}</p>
+        <ul>{p.bullets.map((b) => <li>{b}</li>)}</ul>
+      </div>
+    ))}
+
+    <h2>Skills</h2>
+    <dl class="kv">{profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}</dl>
+  </article>
+</Base>
+<style>
+  .cv { padding-top: 2rem; max-width: 880px; }
+  .cv h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); margin-bottom: 0.4rem; }
+  .cv h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; border-bottom: 1px dashed var(--border-strong); padding-bottom: 0.25rem; }
+  .cv h3 { font-size: 0.98rem; }
+  .cv .item { margin-bottom: 1.1rem; }
+  .cv ul { margin: 0.35rem 0 0; padding-left: 2.5ch; }
+  .cv li { margin: 0.25rem 0; }
+  .cv p { margin: 0.35rem 0; }
+  @media print {
+    :global(body::after), :global(.top), :global(footer.site), :global(.prompt), .actions { display: none !important; }
+    :global(body) { background: #fff; color: #000; }
+    :global(h1), :global(h2), :global(h3), :global(a) { color: #000 !important; text-shadow: none !important; }
+  }
+</style>

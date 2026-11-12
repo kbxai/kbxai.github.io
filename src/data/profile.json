@@ -1,0 +1,44 @@
+{
+  "name": "Kartik Bajaj",
+  "handle": "kbxai",
+  "headline": "Seeking: AI/LLM Engineer Internship",
+  "availability": "Available now for 3-6 months | Hybrid or in-person (Delhi-NCR, Chandigarh, Bangalore) or remote",
+  "location": "Ambala, Haryana, India",
+  "email": "kartikbajaj.me@gmail.com",
+  "phone": "+91 98965-35933",
+  "phoneHref": "tel:+919896535933",
+  "links": {
+    "github": "https://github.com/kbxai",
+    "linkedin": "https://www.linkedin.com/in/kbxai"
+  },
+  "proof": [
+    "Macro F1 0.954 on a private IITM Deep Learning Kaggle competition (noisy audio genre classification)",
+    "Live LLM app: resume + job description in, interview report out (Gemini, schema-validated output)",
+    "Three live demos: Vercel and two Hugging Face Spaces"
+  ],
+  "aiAssisted": "I build with AI coding tools (Claude Code, Google Antigravity). I design the flow, choose the stack, review the code, and can explain every part.",
+  "education": [
+    {
+      "institution": "Indian Institute of Technology Madras",
+      "degree": "BS in Data Science and Applications",
+      "dates": "Jun 2024 - Present",
+      "detail": "CGPA 8.04/10 | Degree requirements complete Jul 2027 | Expected graduation Jun 2028"
+    },
+    {
+      "institution": "S.A. Jain Senior Model School, Ambala",
+      "degree": "CBSE Class XII",
+      "dates": "2023 - 2024",
+      "detail": "Grade 9.0/10"
+    }
+  ],
+  "coursework": ["Machine Learning", "Deep Learning", "NLP", "DBMS", "Operating Systems", "Probability and Statistics", "Modern Application Development"],
+  "skills": [
+    { "group": "LLM and GenAI", "items": ["Gemini API", "OpenAI-compatible APIs", "structured output (Pydantic, Zod)", "prompt design"] },
+    { "group": "RAG", "items": ["RAG pipelines", "ChromaDB", "bge-small-en-v1.5 embeddings", "LangChain"] },
+    { "group": "ML and Data", "items": ["PyTorch", "scikit-learn", "Hugging Face Transformers", "Pandas", "NumPy", "TF-IDF", "model evaluation"] },
+    { "group": "Languages", "items": ["Python", "JavaScript", "SQL"] },
+    { "group": "Backend and Frontend", "items": ["FastAPI", "Flask", "Node.js", "Express", "REST", "JWT", "Celery", "Redis", "MongoDB", "React", "Vue.js"] },
+    { "group": "Tools", "items": ["Docker", "Docker Compose", "Git", "GitHub", "GitHub Pages", "Vercel", "Render", "Hugging Face Spaces"] },
+    { "group": "AI coding tools", "items": ["Claude Code", "Google Antigravity"] }
+  ]
+}

@@ -1,0 +1,71 @@
+---
+import Base from '../../layouts/Base.astro';
+import Prompt from '../../components/Prompt.astro';
+import projects from '../../data/projects.json';
+import profile from '../../data/profile.json';
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: (typeof projects)[number] };
+const i = projects.findIndex((x) => x.slug === p.slug);
+const others = projects.filter((x) => x.slug !== p.slug);
+const metric = p.metric.label === 'live' ? `live ${p.metric.value}` : `${p.metric.label} ${p.metric.value}`;
+---
+<Base title={`${p.title} | Kartik Bajaj`} description={`${p.summary} ${p.context}, ${p.dates}.`}>
+  <article class="wrap man" aria-labelledby="t">
+    <Prompt cmd={`man ${p.slug}`} />
+    <p class="man-head muted" aria-hidden="true"><span>{p.slug.toUpperCase()}(1)</span><span>Projects of {profile.name}</span><span>{p.slug.toUpperCase()}(1)</span></p>
+    <h1 id="t">{p.title}</h1>
+
+    <h2>NAME</h2>
+    <p class="ind">{p.slug} - {p.summary}</p>
+
+    <h2>SYNOPSIS</h2>
+    <p class="ind">{p.context} | {p.dates} | <span class="amber">{metric}</span></p>
+    <p class="ind actions">
+      {p.links.demo && <a class="btn" href={p.links.demo}>live demo</a>}
+      <a class="btn ghost" href={p.links.github}>github</a>
+    </p>
+
+    <h2>DESCRIPTION</h2>
+    <ul class="ind bullets">{p.bullets.map((b) => <li>{b}</li>)}</ul>
+
+    {p.results.length > 0 && (
+      <>
+        <h2>RESULTS</h2>
+        <div class="ind table-scroll">
+          <table class="ascii">
+            <thead><tr><th scope="col">model / setup</th><th scope="col">Macro F1</th></tr></thead>
+            <tbody>{p.results.map((r) => <tr><td>{r.model}</td><td class="num">{r.score}</td></tr>)}</tbody>
+          </table>
+        </div>
+      </>
+    )}
+
+    <h2>STACK</h2>
+    <p class="ind">{p.stack.join(', ')}</p>
+
+    <h2>LIMITATIONS</h2>
+    <ul class="ind bullets">{p.limitations.map((l) => <li>{l}</li>)}</ul>
+
+    <h2>NOTES</h2>
+    <p class="ind muted">{profile.aiAssisted}</p>
+
+    <h2>SEE ALSO</h2>
+    <p class="ind">{others.map((o, k) => (<>{k > 0 && ', '}<a href={`/projects/${o.slug}/`}>{o.slug}(1)</a></>))}</p>
+
+    <p class="man-foot muted" aria-hidden="true"><span>kbxai</span><span>{p.dates}</span><span>{i + 1}/{projects.length}</span></p>
+  </article>
+</Base>
+<style>
+  .man { padding-top: 2rem; }
+  .man h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin: 1rem 0 0.5rem; }
+  .man h2 { font-size: 1rem; margin: 1.6rem 0 0.4rem; letter-spacing: 0.08em; }
+  .ind { margin: 0 0 0 4ch; }
+  @media (max-width: 560px) { .ind { margin-left: 1ch; } }
+  .bullets { padding-left: 2ch; }
+  .bullets li { margin: 0.35rem 0; }
+  .man-head, .man-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 0.8rem; flex-wrap: wrap; }
+  .man-foot { margin-top: 2.5rem; border-top: 1px dashed var(--border-strong); padding-top: 0.5rem; }
+</style>

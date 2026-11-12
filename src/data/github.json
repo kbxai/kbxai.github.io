@@ -1,0 +1,214 @@
+{
+  "user": "kbxai",
+  "fetchedAt": "2026-11-12T02:55:44.350Z",
+  "repos": [
+    {
+      "name": "LLM-Powered-Code-Deployment-Agent",
+      "description": "FastAPI service that turns a natural-language brief into a static web app with an LLM and deploys it to GitHub Pages (IITM Tools in Data Science project)",
+      "url": "https://github.com/kbxai/LLM-Powered-Code-Deployment-Agent",
+      "homepage": "https://huggingface.co/spaces/24f2007692/llm-code-deployer",
+      "language": "Python",
+      "topics": [
+        "automation",
+        "docker",
+        "fastapi",
+        "github-api",
+        "github-pages",
+        "llm",
+        "pydantic"
+      ],
+      "stars": 2,
+      "updatedAt": "2026-11-08T17:05:31Z",
+      "featured": true
+    },
+    {
+      "name": "Messy-Mashup-Genre-Classification",
+      "description": "Noisy audio genre classification: synthetic mashup training data, ResNet-50 and Audio Spectrogram Transformer ensemble with test-time augmentation (Macro F1 0.954, IITM Deep Learning Kaggle competition)",
+      "url": "https://github.com/kbxai/Messy-Mashup-Genre-Classification",
+      "homepage": "https://huggingface.co/spaces/24f2007692/audio-classifier-genai",
+      "language": "Jupyter Notebook",
+      "topics": [
+        "audio-classification",
+        "audio-spectrogram-transformer",
+        "deep-learning",
+        "kaggle",
+        "pytorch",
+        "resnet50",
+        "transfer-learning"
+      ],
+      "stars": 1,
+      "updatedAt": "2026-11-08T17:05:29Z",
+      "featured": true
+    },
+    {
+      "name": "Comment-Category-Prediction-Challenge",
+      "description": "Comment category classification with TF-IDF and a voting ensemble of SGD, bagged Logistic Regression and SVC (Macro F1 0.8295, IITM ML competition)",
+      "url": "https://github.com/kbxai/Comment-Category-Prediction-Challenge",
+      "homepage": null,
+      "language": "Jupyter Notebook",
+      "topics": [
+        "ensemble-learning",
+        "kaggle",
+        "nlp",
+        "scikit-learn",
+        "text-classification",
+        "tf-idf"
+      ],
+      "stars": 1,
+      "updatedAt": "2026-11-08T11:42:40Z",
+      "featured": true
+    },
+    {
+      "name": "MedSyncPro-Hospital-Management-System",
+      "description": "Role-based hospital appointment system: Flask API, Vue.js frontend, Celery and Redis scheduled jobs, Docker Compose (IITM MAD-2 project)",
+      "url": "https://github.com/kbxai/MedSyncPro-Hospital-Management-System",
+      "homepage": null,
+      "language": "Vue",
+      "topics": [
+        "celery",
+        "docker-compose",
+        "flask",
+        "healthcare",
+        "jwt",
+        "redis",
+        "role-based-access-control",
+        "vuejs"
+      ],
+      "stars": 1,
+      "updatedAt": "2026-11-08T11:42:38Z",
+      "featured": true
+    },
+    {
+      "name": "interview-intelligence-ai",
+      "description": "Full stack AI interview preparation & ATS resume studio platform",
+      "url": "https://github.com/kbxai/interview-intelligence-ai",
+      "homepage": null,
+      "language": "JavaScript",
+      "topics": [
+        "ats",
+        "docker",
+        "express",
+        "gemini",
+        "jwt",
+        "llm",
+        "mongodb",
+        "nodejs",
+        "puppeteer",
+        "react"
+      ],
+      "stars": 0,
+      "updatedAt": "2026-11-08T11:42:29Z",
+      "featured": true
+    },
+    {
+      "name": "gen-ai-learning",
+      "description": "Learning exercises from a Generative AI course: chat models with LangChain and Gemini",
+      "url": "https://github.com/kbxai/gen-ai-learning",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2026-10-30T10:32:43Z",
+      "featured": false
+    },
+    {
+      "name": "book-chat-rag",
+      "description": "Beginner document question-answering app using embeddings and ChromaDB",
+      "url": "https://github.com/kbxai/book-chat-rag",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2026-10-30T10:31:39Z",
+      "featured": false
+    },
+    {
+      "name": "multi-model-chatbot",
+      "description": "Beginner Streamlit chatbot with multiple AI model integrations",
+      "url": "https://github.com/kbxai/multi-model-chatbot",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2026-10-30T10:31:21Z",
+      "featured": false
+    },
+    {
+      "name": "ai-chatbot-playground",
+      "description": "Beginner AI chatbot examples with LangChain and multiple model providers",
+      "url": "https://github.com/kbxai/ai-chatbot-playground",
+      "homepage": null,
+      "language": "Python",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2026-10-30T10:31:05Z",
+      "featured": false
+    },
+    {
+      "name": "madras-hc-dashboard",
+      "description": "Static HTML dashboard prototype for court case status, cause list and analytics",
+      "url": "https://github.com/kbxai/madras-hc-dashboard",
+      "homepage": "https://madras-hc-dashboard.vercel.app",
+      "language": "HTML",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2026-08-26T12:38:18Z",
+      "featured": false
+    },
+    {
+      "name": "Movie-Review-Sentiment-Prediction",
+      "description": "Movie review sentiment classification notebook",
+      "url": "https://github.com/kbxai/Movie-Review-Sentiment-Prediction",
+      "homepage": null,
+      "language": "Jupyter Notebook",
+      "topics": [],
+      "stars": 1,
+      "updatedAt": "2026-01-21T13:13:44Z",
+      "featured": false
+    },
+    {
+      "name": "Banglore-House-Price-Prediction-regression-project",
+      "description": "House price regression notebook",
+      "url": "https://github.com/kbxai/Banglore-House-Price-Prediction-regression-project",
+      "homepage": null,
+      "language": "Jupyter Notebook",
+      "topics": [],
+      "stars": 1,
+      "updatedAt": "2026-01-21T13:12:50Z",
+      "featured": false
+    },
+    {
+      "name": "Hotel-Booking-Cancellation-Prediction",
+      "description": "Hotel booking cancellation classification notebook",
+      "url": "https://github.com/kbxai/Hotel-Booking-Cancellation-Prediction",
+      "homepage": null,
+      "language": "Jupyter Notebook",
+      "topics": [],
+      "stars": 1,
+      "updatedAt": "2026-01-14T08:09:53Z",
+      "featured": false
+    },
+    {
+      "name": "vehicle-parking-app-v1",
+      "description": "Vehicle parking management web app (IITM MAD-1 coursework)",
+      "url": "https://github.com/kbxai/vehicle-parking-app-v1",
+      "homepage": null,
+      "language": "HTML",
+      "topics": [],
+      "stars": 2,
+      "updatedAt": "2025-11-20T06:49:37Z",
+      "featured": false
+    },
+    {
+      "name": "MAD-1-LAB-ASSIGNMENTS",
+      "description": "Lab assignments for IITM Modern Application Development 1",
+      "url": "https://github.com/kbxai/MAD-1-LAB-ASSIGNMENTS",
+      "homepage": null,
+      "language": "HTML",
+      "topics": [],
+      "stars": 0,
+      "updatedAt": "2025-01-30T18:02:28Z",
+      "featured": false
+    }
+  ]
+}

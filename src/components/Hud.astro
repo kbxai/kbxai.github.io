@@ -1,0 +1,17 @@
+---
+// Live performance HUD: real measured values only, filled in by src/lib/hud.ts after load.
+---
+<dl class="hud" id="hud" aria-label="Live performance of this page">
+  <div><dt>LCP</dt><dd data-hud="lcp">-</dd></div>
+  <div><dt>CLS</dt><dd data-hud="cls">-</dd></div>
+  <div><dt>INP</dt><dd data-hud="inp">-</dd></div>
+  <div><dt>JS</dt><dd data-hud="js">-</dd></div>
+  <div><dt>3D</dt><dd data-hud="gpu">off</dd></div>
+  <div><dt>frame</dt><dd data-hud="frame">-</dd></div>
+  <div><dt>motion</dt><dd data-hud="motion">-</dd></div>
+</dl>
+<script>
+  const start = () => import('../lib/hud').then((m) => m.startHud());
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, { once: true });
+</script>

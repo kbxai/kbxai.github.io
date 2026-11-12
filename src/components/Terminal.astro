@@ -1,0 +1,40 @@
+---
+// Interactive shell. Hidden without JS (all its content already exists as normal page sections).
+---
+<div class="term" id="term" hidden>
+  <div class="term-bar" aria-hidden="true"><span></span><span></span><span></span><em>visitor@kbxai: ~</em></div>
+  <div class="term-log" id="term-log" role="log" aria-live="polite" aria-label="Terminal output"></div>
+  <form class="term-form" id="term-form" autocomplete="off">
+    <label for="term-input"><span class="user">visitor@kbxai</span>:<span class="muted">~</span>$</label>
+    <input id="term-input" name="cmd" type="text" spellcheck="false" autocapitalize="off" enterkeyhint="send"
+      aria-describedby="term-hint" maxlength="320" />
+  </form>
+  <p class="sr-only" id="term-hint">Type a command such as help, ls projects, cat messy-mashup, or ask followed by a question, then press Enter.</p>
+</div>
+
+<style>
+  .term { margin-top: 1.75rem; border: 1px solid var(--border-strong); background: #070a08; }
+  .term-bar { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  .term-bar span { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); }
+  .term-bar em { margin-left: 8px; color: var(--muted); font-style: normal; font-size: 0.8rem; }
+  .term-log { padding: 10px 12px 0; max-height: 300px; overflow-y: auto; font-size: 0.9rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .term-log :global(p) { margin: 0; min-height: 1.5em; }
+  .term-log :global(.k-muted) { color: var(--muted); }
+  .term-log :global(.k-accent) { color: var(--accent); text-shadow: var(--glow); }
+  .term-log :global(.k-amber) { color: var(--accent2); }
+  .term-log :global(.k-error) { color: var(--error); }
+  .term-log :global(.k-echo) { color: var(--fg); }
+  .term-form { display: flex; gap: 8px; align-items: center; padding: 8px 12px 12px; }
+  .term-form label { color: var(--muted); white-space: nowrap; font-size: 0.9rem; }
+  .term-form .user { color: var(--accent); }
+  .term-form input {
+    flex: 1; min-width: 0; background: transparent; border: 0; border-bottom: 1px dashed var(--border-strong);
+    color: var(--fg); font: inherit; font-size: 0.95rem; padding: 4px 2px; caret-color: var(--accent);
+  }
+  .term-form input:focus-visible { outline: none; border-bottom-color: var(--accent2); }
+</style>
+
+<script>
+  import { initTerminal } from '../scripts/terminal/ui';
+  initTerminal();
+</script>
