@@ -1,149 +1,151 @@
 ---
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import Portrait from '../components/Portrait.astro';
+import ProjectRow from '../components/ProjectRow.astro';
 import Terminal from '../components/Terminal.astro';
 import profile from '../data/profile.json';
 import projects from '../data/projects.json';
 import github from '../data/github.json';
-import thumbs from '../data/thumbs.json';
 
-const featuredNames = new Set([
-  'interview-intelligence-ai', 'Messy-Mashup-Genre-Classification', 'LLM-Powered-Code-Deployment-Agent',
-  'MedSyncPro-Hospital-Management-System', 'Comment-Category-Prediction-Challenge',
-]);
-const otherRepos = github.repos.filter((r) => !featuredNames.has(r.name));
-const thumbFor = (slug: string) => (thumbs as Record<string, { src: string; width: number; height: number }>)[slug] ?? null;
+const featured = new Set(projects.map((p) => p.links.github.split('/').pop()));
+const otherRepos = github.repos.filter((r) => !featured.has(r.name));
+const demos = projects.filter((p) => p.links.demo);
 ---
 <Base
   title="Kartik Bajaj | AI/LLM Engineer intern | IIT Madras"
-  description="Kartik Bajaj, IIT Madras BS Data Science student seeking an AI/LLM Engineer internship. Live LLM apps, Macro F1 0.954 audio classifier, projects, resume and contact."
+  description="Kartik Bajaj, IIT Madras BS Data Science student seeking an AI/LLM Engineer internship. Live LLM apps, a Macro F1 0.954 audio classifier, projects, resume and contact."
 >
   <section class="hero" aria-labelledby="whoami">
-    <div class="wrap hero-grid">
-      <div class="hero-text">
-        <Prompt cmd="whoami" />
-        <h1 id="whoami">{profile.name}</h1>
-        <p class="headline">{profile.headline}</p>
-        <p class="muted">IIT Madras, BS in Data Science and Applications | {profile.location}</p>
-        <ul class="proof">
-          {profile.proof.map((p) => <li>{p}</li>)}
-        </ul>
-        <p class="muted small">{profile.availability}</p>
-        <div class="actions">
-          <a class="btn" href="/resume/">resume</a>
-          <a class="btn ghost" href="#projects">ls projects</a>
-          <a class="btn ghost" href={`mailto:${profile.email}`}>email</a>
-        </div>
-      </div>
-      <div class="hero-art" id="hero-art" aria-hidden="true">
-        <img id="hero-fallback" class="art-img" src="/portrait/fallback.webp" width="736" height="786" alt="" decoding="async" fetchpriority="low" />
+    <div class="stage"><Portrait /></div>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="wrap copy">
+      <Prompt cmd="whoami" />
+      <h1 id="whoami" data-scramble="1000">{profile.name}</h1>
+      <p class="headline">{profile.headline}</p>
+      <p class="lead">
+        I build LLM apps and noise-robust ML models. My audio classifier scored a Macro F1 of{' '}
+        <span class="amber">0.954</span>{' '}in a private IITM Kaggle competition, and three of my projects have live demos.
+      </p>
+      <p class="muted">IIT Madras, BS in Data Science and Applications. {profile.availability}.</p>
+      <div class="actions">
+        <a class="btn" href="/resume/">Read my resume</a>
+        <a class="btn ghost" href={`mailto:${profile.email}`}>Email me</a>
+        <a class="btn ghost" href="#projects">See projects</a>
       </div>
     </div>
+  </section>
+
+  <section id="projects" class="block" aria-labelledby="projects-title">
     <div class="wrap">
+      <h2 id="projects-title">Projects</h2>
+      <p class="intro muted">Five projects, in the same order as my resume. Each page shows the numbers I measured and what is still missing.</p>
+      <div class="rows">
+        {projects.map((p) => <ProjectRow project={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="terminal" class="block" aria-labelledby="term-title">
+    <div class="wrap">
+      <h2 id="term-title">Ask the site</h2>
+      <p class="intro muted">
+        Type <code>help</code>, or ask a question about my work. Answers come only from the facts on this site.
+        Try <code>whoami --face</code> to see how the portrait is drawn.
+      </p>
       <Terminal />
     </div>
   </section>
 
-  <hr class="rule" />
-
-  <section id="projects" aria-labelledby="projects-title">
-    <div class="wrap">
-      <Prompt cmd="ls ./projects" />
-      <h2 id="projects-title">Projects</h2>
-      <p class="muted">Five projects from my resume. Each has a man page with results and known limitations.</p>
-      <div class="grid">
-        {projects.map((p) => <ProjectCard project={p} thumb={thumbFor(p.slug)} />)}
+  <section id="skills" class="block" aria-labelledby="skills-title">
+    <div class="wrap two">
+      <div>
+        <h2 id="skills-title">Skills</h2>
+        <dl class="kv">
+          {profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}
+        </dl>
+        <p class="muted note">{profile.aiAssisted}</p>
+      </div>
+      <div>
+        <h2 id="education-title">Education</h2>
+        {profile.education.map((e) => (
+          <div class="edu">
+            <h3>{e.institution}</h3>
+            <p>{e.degree}, {e.dates}</p>
+            <p class="amber">{e.detail}</p>
+          </div>
+        ))}
+        <p class="muted">Coursework: {profile.coursework.join(', ')}.</p>
       </div>
     </div>
   </section>
 
-  <section id="repos" aria-labelledby="repos-title">
+  <section id="repos" class="block" aria-labelledby="repos-title">
     <div class="wrap">
-      <Prompt cmd="ls ~/repos --all" />
       <h2 id="repos-title">More on GitHub</h2>
-      <p class="muted">Learning projects and coursework. Pulled from the GitHub API at build time.</p>
-      <div class="table-scroll">
-        <table class="ascii">
-          <thead><tr><th scope="col">repo</th><th scope="col">lang</th><th scope="col">about</th></tr></thead>
-          <tbody>
-            {otherRepos.map((r) => (
-              <tr>
-                <td><a href={r.url}>{r.name}</a></td>
-                <td>{r.language ?? '-'}</td>
-                <td>{r.description ?? ''}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <p class="intro muted">Learning projects and coursework, read from the GitHub API when this site is built.</p>
+      <ul class="repos">
+        {otherRepos.map((r) => (
+          <li><a href={r.url}>{r.name}</a><span class="muted">{r.description ? ` ${r.description}` : ''}</span></li>
+        ))}
+      </ul>
     </div>
   </section>
 
-  <section id="skills" aria-labelledby="skills-title">
+  <section id="contact" class="block" aria-labelledby="contact-title">
     <div class="wrap">
-      <Prompt cmd="cat skills.txt" />
-      <h2 id="skills-title">Skills</h2>
-      <dl class="kv">
-        {profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}
-      </dl>
-      <p class="muted">{profile.aiAssisted}</p>
-    </div>
-  </section>
-
-  <section id="education" aria-labelledby="education-title">
-    <div class="wrap">
-      <Prompt cmd="cat education.txt" />
-      <h2 id="education-title">Education</h2>
-      {profile.education.map((e) => (
-        <div class="edu">
-          <h3>{e.institution}</h3>
-          <p>{e.degree} | <span class="muted">{e.dates}</span></p>
-          <p class="amber">{e.detail}</p>
-        </div>
-      ))}
-      <p><span class="muted">Coursework:</span> {profile.coursework.join(', ')}</p>
-    </div>
-  </section>
-
-  <section id="contact" aria-labelledby="contact-title">
-    <div class="wrap">
-      <Prompt cmd="./contact.sh" />
       <h2 id="contact-title">Contact</h2>
+      <p class="lead2">The fastest way to reach me is email. I answer within a day.</p>
       <dl class="kv">
-        <dt>email</dt><dd><a href={`mailto:${profile.email}`}>{profile.email}</a></dd>
-        <dt>phone</dt><dd><a href={profile.phoneHref}>{profile.phone}</a></dd>
-        <dt>github</dt><dd><a href={profile.links.github}>github.com/kbxai</a></dd>
-        <dt>linkedin</dt><dd><a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></dd>
-        <dt>location</dt><dd>{profile.location}</dd>
-        <dt>open to</dt><dd>{profile.availability}</dd>
+        <dt>Email</dt><dd><a href={`mailto:${profile.email}`}>{profile.email}</a></dd>
+        <dt>Phone</dt><dd><a href={profile.phoneHref}>{profile.phone}</a></dd>
+        <dt>GitHub</dt><dd><a href={profile.links.github}>github.com/kbxai</a></dd>
+        <dt>LinkedIn</dt><dd><a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></dd>
+        <dt>Based in</dt><dd>{profile.location}</dd>
+        <dt>Live demos</dt><dd>{demos.map((p, i) => (<>{i > 0 && ', '}<a href={p.links.demo}>{p.title}</a></>))}</dd>
       </dl>
     </div>
   </section>
 </Base>
 
 <style>
-  .hero { padding-top: 2rem; }
-  .hero-grid { display: grid; gap: 24px; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: center; }
-  .hero h1 { font-size: clamp(2.2rem, 7vw, 4rem); letter-spacing: -0.02em; }
-  .headline { font-size: clamp(1.05rem, 2.6vw, 1.3rem); margin: 0.5rem 0 0.25rem; color: var(--fg); font-weight: 700; }
-  .proof { margin: 1rem 0 0.75rem; padding: 0; list-style: none; }
-  .proof li { padding-left: 2ch; text-indent: -2ch; margin: 0.25rem 0; }
-  .proof li::before { content: '> '; color: var(--accent); }
-  .small { font-size: 0.85rem; }
-  .hero-art { position: relative; aspect-ratio: 4 / 5; max-height: 600px; width: 100%; display: grid; place-items: center; overflow: hidden; }
-  .hero-art :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-  .art-img { width: 100%; height: auto; }
-  .hero-art.live #hero-fallback { opacity: 0; transition: opacity 0.4s; }
-  .edu { margin: 0 0 1rem; }
-  .edu p { margin: 0.2rem 0; }
-  @media (max-width: 820px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-art { order: 2; max-width: 460px; margin: 0 auto; }
+  .hero { position: relative; min-height: calc(100svh - 52px); overflow: hidden; display: grid; align-items: center; }
+  .stage { position: absolute; inset: 0 0 0 auto; width: min(58vw, 860px); display: grid; place-items: center; }
+  .stage :global(.portrait) { height: 100%; aspect-ratio: auto; }
+  .scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--bg) 0%, rgba(5, 8, 6, 0.96) 42%, rgba(5, 8, 6, 0.3) 70%, rgba(5, 8, 6, 0) 100%); }
+  .copy { position: relative; padding-block: 3rem; width: 100%; }
+  .copy > * { max-width: 40rem; }
+  .hero h1 { font-size: clamp(3.4rem, 10.5vw, 9rem); line-height: 0.88; letter-spacing: -0.04em; margin: 0.4rem 0 1.2rem; max-width: 9ch; }
+  .headline { font-family: var(--display); font-weight: 500; font-size: clamp(1.15rem, 2.2vw, 1.5rem); margin: 0 0 1rem; color: var(--fg); }
+  .lead { font-size: clamp(1rem, 1.5vw, 1.12rem); line-height: 1.7; margin: 0 0 1rem; }
+  .actions { margin-top: 1.5rem; }
+
+  .block { padding: 4.5rem 0 1rem; }
+  .intro { max-width: 60ch; margin: 0 0 1.5rem; }
+  .rows { border-bottom: 1px solid var(--border-strong); }
+  .two { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 3rem; }
+  .note { margin-top: 1.25rem; max-width: 56ch; }
+  .edu { margin: 0 0 1.25rem; }
+  .edu h3 { margin: 0 0 0.2rem; font-size: 1.02rem; }
+  .edu p { margin: 0.15rem 0; }
+  .repos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .repos li { border-left: 2px solid var(--border-strong); padding-left: 0.9rem; }
+  .lead2 { font-family: var(--display); font-size: clamp(1.25rem, 2.6vw, 1.8rem); margin: 0 0 1.5rem; max-width: 30ch; line-height: 1.2; }
+  code { color: var(--accent2); }
+
+  @media (max-width: 860px) {
+    .hero { min-height: 0; display: block; }
+    .stage { position: relative; inset: auto; width: 100%; height: min(78vw, 360px); }
+    .scrim { display: none; }
+    .copy { padding-top: 0.5rem; }
+    .two { grid-template-columns: 1fr; gap: 2rem; }
+    .block { padding-top: 3.25rem; }
   }
 </style>
 
 <script>
   import { maybeStartHero } from '../lib/hero-loader';
+  import { scrambleAll } from '../lib/scramble';
   maybeStartHero();
+  scrambleAll();
 </script>

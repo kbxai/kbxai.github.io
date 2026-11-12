@@ -8,6 +8,10 @@ export function scramble(el: HTMLElement, duration = 700): void {
   const final = el.textContent ?? '';
   if (!final.trim() || !motionAllowed()) return;
   el.setAttribute('aria-label', final);
+  // lock the box while glyphs change width, so nothing below it moves (CLS)
+  const box = el.getBoundingClientRect();
+  el.style.height = `${box.height}px`;
+  el.style.overflow = 'hidden';
   const start = performance.now();
   const order = [...final].map(() => Math.random());
   const tick = (now: number) => {
@@ -19,7 +23,11 @@ export function scramble(el: HTMLElement, duration = 700): void {
     }
     el.textContent = out;
     if (t < 1) requestAnimationFrame(tick);
-    else el.textContent = final;
+    else {
+      el.textContent = final;
+      el.style.height = '';
+      el.style.overflow = '';
+    }
   };
   requestAnimationFrame(tick);
 }

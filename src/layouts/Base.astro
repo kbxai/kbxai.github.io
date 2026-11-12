@@ -1,6 +1,8 @@
 ---
 import '@fontsource/jetbrains-mono/latin-400.css';
 import '@fontsource/jetbrains-mono/latin-700.css';
+import '@fontsource/space-grotesk/latin-500.css';
+import '@fontsource/space-grotesk/latin-700.css';
 import '../styles/global.css';
 import profile from '../data/profile.json';
 import Hud from '../components/Hud.astro';
@@ -28,11 +30,10 @@ const person = {
 };
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const nav = [
-  { href: '/#projects', label: '~/projects' },
-  { href: '/#skills', label: '~/skills' },
-  { href: '/lab/spectrogram/', label: '~/lab' },
-  { href: '/resume/', label: 'resume' },
-  { href: '/#contact', label: 'contact' },
+  { href: '/#projects', label: 'Projects' },
+  { href: '/lab/spectrogram/', label: 'Spectrogram lab' },
+  { href: '/resume/', label: 'Resume' },
+  { href: '/#contact', label: 'Contact' },
 ];
 ---
 <!doctype html>
@@ -73,7 +74,7 @@ const nav = [
     <a class="skip" href="#main">Skip to content</a>
     <header class="top">
       <div class="wrap">
-        <a class="brand" href="/">kbxai<span class="blink" aria-hidden="true">_</span></a>
+        <a class="brand" href="/">Kartik Bajaj</a>
         <nav aria-label="Main">
           {nav.map((n) => (
             <a class="nav" href={n.href} aria-current={path === n.href.replace(/\/$/, '') ? 'page' : undefined}>{n.label}</a>

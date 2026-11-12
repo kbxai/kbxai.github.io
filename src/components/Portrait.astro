@@ -4,7 +4,7 @@ interface Props { id?: string; class?: string }
 const { id = 'hero-art', class: cls = '' } = Astro.props;
 ---
 <div class={`portrait ${cls}`} id={id} aria-hidden="true">
-  <img class="portrait-fallback" src="/portrait/fallback.webp" width="736" height="786" alt="" decoding="async" fetchpriority="low" />
+  <img id="hero-fallback" class="portrait-fallback" src="/portrait/fallback.webp" width="736" height="786" alt="" decoding="async" fetchpriority="low" />
 </div>
 <style>
   .portrait { position: relative; width: 100%; aspect-ratio: 120 / 123; overflow: hidden; }

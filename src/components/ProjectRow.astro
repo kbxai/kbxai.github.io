@@ -1,0 +1,38 @@
+---
+interface Project {
+  slug: string; title: string; context: string; dates: string; stack: string[];
+  metric: { label: string; value: string }; summary: string; links: { demo?: string; github: string };
+}
+interface Props { project: Project }
+const { project: p } = Astro.props;
+const isLive = p.metric.label === 'live';
+---
+<article class="row">
+  <div class="head">
+    <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
+    <p class="metric" aria-label={isLive ? 'Has a live demo' : `${p.metric.label} ${p.metric.value}`}>
+      {isLive ? 'Live' : <><span class="v">{p.metric.value}</span> <span class="l">{p.metric.label}</span></>}
+    </p>
+  </div>
+  <p class="sum">{p.summary}</p>
+  <p class="meta">{p.context}, {p.dates}. {p.stack.join(', ')}.</p>
+  <p class="links">
+    {p.links.demo && <a href={p.links.demo}>Live demo<span class="sr-only"> of {p.title}</span></a>}
+    <a href={p.links.github}>Source on GitHub<span class="sr-only"> for {p.title}</span></a>
+    <a href={`/projects/${p.slug}/`}>Results and limits<span class="sr-only"> for {p.title}</span></a>
+  </p>
+</article>
+
+<style>
+  .row { padding: 1.6rem 0 1.7rem; border-top: 1px solid var(--border-strong); display: grid; gap: 0.45rem; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+  h3 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.5rem); line-height: 1.08; letter-spacing: -0.02em; }
+  h3 a { color: var(--fg); text-decoration: none; }
+  h3 a:hover { color: var(--accent); text-shadow: var(--glow); }
+  .metric { margin: 0; color: var(--accent2); font-weight: 700; white-space: nowrap; }
+  .metric .v { font-family: var(--display); font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.02em; text-shadow: var(--glow-amber); }
+  .metric .l { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+  .sum { margin: 0; max-width: 62ch; }
+  .meta { margin: 0; color: var(--muted); font-size: 0.88rem; max-width: 70ch; }
+  .links { margin: 0.35rem 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-size: 0.92rem; }
+</style>
