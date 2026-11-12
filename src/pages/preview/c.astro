@@ -1,0 +1,72 @@
+---
+// Direction C: "Signal" - cinematic, full-bleed portrait, name decoding out of noise.
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/700.css';
+import Preview from '../../layouts/Preview.astro';
+import Portrait from '../../components/Portrait.astro';
+import profile from '../../data/profile.json';
+import projects from '../../data/projects.json';
+---
+<Preview title="Preview C: Signal | Kartik Bajaj">
+  <main class="sig">
+    <div class="stage"><Portrait /></div>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <header class="top">
+      <span>KBXAI</span>
+      <span class="blink">● RECEIVING TRANSMISSION 01/05</span>
+    </header>
+
+    <section class="copy">
+      <p class="eyebrow" data-scramble="700">IIT Madras · Data Science</p>
+      <h1><span data-scramble="1100">KARTIK</span><br /><span data-scramble="1300">BAJAJ</span></h1>
+      <p class="lead">{profile.headline}. I build LLM applications and noise-robust ML models, with three live demos and a <span class="amber">0.954 Macro F1</span> on a private IITM Kaggle competition.</p>
+      <div class="cta">
+        <a class="btn" href="/resume/">resume</a>
+        <a class="btn ghost" href={`mailto:${profile.email}`}>{profile.email}</a>
+      </div>
+    </section>
+
+    <p class="cue">scroll to receive ↓</p>
+  </main>
+  <section class="strip" aria-label="Projects">
+    {projects.slice(0, 3).map((p, i) => (
+      <a class="item" href={`/projects/${p.slug}/`}>
+        <span class="n">0{i + 1}</span>
+        <span class="t">{p.title}</span>
+        <span class="m">{p.metric.label === 'live' ? 'live demo' : `${p.metric.label} ${p.metric.value}`}</span>
+      </a>
+    ))}
+  </section>
+</Preview>
+
+<style>
+  :global(body) { background: #030504; color: #e6f7e4; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .sig { position: relative; min-height: 100svh; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; }
+  .stage { position: absolute; inset: 0 0 0 auto; width: min(62vw, 900px); display: grid; place-items: center; opacity: 0.95; }
+  .stage :global(.portrait) { height: 100%; aspect-ratio: auto; }
+  .scrim { position: absolute; inset: 0; background: linear-gradient(90deg, #030504 0%, rgba(3, 5, 4, 0.92) 38%, rgba(3, 5, 4, 0.2) 70%, rgba(3, 5, 4, 0) 100%); pointer-events: none; }
+  .top { position: relative; display: flex; justify-content: space-between; gap: 16px; padding: 22px clamp(20px, 5vw, 64px); font-size: 12px; letter-spacing: 0.18em; color: #86a886; }
+  .blink { color: #ffb454; }
+  .copy { position: relative; align-self: center; padding: 0 clamp(20px, 5vw, 64px); max-width: 760px; }
+  .eyebrow { font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; color: #ffb454; margin: 0 0 18px; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(64px, 13vw, 184px); line-height: 0.84; letter-spacing: -0.04em; margin: 0; color: #7cff8a; text-shadow: 0 0 24px rgba(124, 255, 138, 0.28); }
+  .lead { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.65; color: #c7e3c3; margin: 26px 0 0; max-width: 34em; }
+  .amber { color: #ffb454; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .btn { padding: 10px 16px; font-size: 13px; text-decoration: none; background: #7cff8a; color: #030504; font-weight: 700; letter-spacing: 0.04em; }
+  .btn.ghost { background: rgba(3, 5, 4, 0.6); color: #e6f7e4; border: 1px solid #2f5236; font-weight: 400; }
+  .btn.ghost:hover { border-color: #7cff8a; }
+  .cue { position: relative; padding: 0 clamp(20px, 5vw, 64px) 24px; font-size: 12px; letter-spacing: 0.2em; color: #86a886; margin: 0; }
+  .strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #16241a; }
+  .item { display: grid; gap: 6px; padding: 26px clamp(20px, 3vw, 40px); text-decoration: none; color: #e6f7e4; border-right: 1px solid #16241a; }
+  .item:hover .t { color: #7cff8a; }
+  .n { font-size: 12px; color: #86a886; }
+  .t { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 20px; }
+  .m { font-size: 12px; color: #ffb454; }
+  @media (max-width: 860px) {
+    .stage { inset: 0; width: 100%; opacity: 0.45; }
+    .scrim { background: linear-gradient(180deg, rgba(3, 5, 4, 0.2), rgba(3, 5, 4, 0.85) 60%, #030504); }
+    .strip { grid-template-columns: 1fr; }
+  }
+</style>

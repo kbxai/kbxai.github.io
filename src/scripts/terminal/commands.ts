@@ -8,7 +8,8 @@ export type Action =
   | { type: 'glow'; on: boolean }
   | { type: 'motion'; paused: boolean }
   | { type: 'ask'; question: string }
-  | { type: 'experimental'; name: string };
+  | { type: 'experimental'; name: string }
+  | { type: 'face' };
 export interface Result { lines: Line[]; action?: Action }
 
 export interface ProjectLite {
@@ -28,7 +29,7 @@ export interface Ctx {
 
 export const COMMANDS: { name: string; usage: string; about: string }[] = [
   { name: 'help', usage: 'help', about: 'list commands' },
-  { name: 'whoami', usage: 'whoami', about: 'who I am, in one screen' },
+  { name: 'whoami', usage: 'whoami [--face]', about: 'who I am (--face prints my ASCII portrait)' },
   { name: 'ls', usage: 'ls [projects|lab]', about: 'list projects or lab pages' },
   { name: 'cat', usage: 'cat <project|skills|education>', about: 'print details' },
   { name: 'open', usage: 'open <project|resume|github|linkedin|lab>', about: 'open a page' },
@@ -88,6 +89,7 @@ export function run(input: string, ctx: Ctx): Result {
         ],
       };
     case 'whoami':
+      if (args[0] === '--face' || args[0] === '-f') return { lines: [L('rendering face from 478 landmarks...', 'muted')], action: { type: 'face' } };
       return {
         lines: [
           L(ctx.profile.name, 'accent'),

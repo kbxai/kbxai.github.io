@@ -12,3 +12,6 @@ scripts/.thumbs-raw/
 .claude/
 .agents/
 .mcp.json
+scripts/portrait/out/
+scripts/portrait/src/
+*.npz

@@ -27,8 +27,8 @@ const emit = (detail: Record<string, unknown>) => {
   window.dispatchEvent(new CustomEvent('kb:hero', { detail }));
 };
 
-export function maybeStartHero(): void {
-  const host = document.getElementById('hero-art');
+export function maybeStartHero(hostId = 'hero-art'): void {
+  const host = document.getElementById(hostId);
   if (!host) return;
   let stop: (() => void) | null = null;
   let starting = false;
@@ -42,7 +42,7 @@ export function maybeStartHero(): void {
     }
     starting = true;
     try {
-      const { startHero } = await import('../three/hero');
+      const { startHero } = await import('../three/portrait');
       stop = startHero(host, { tier, onStats: (frameMs, state) => emit({ frameMs, state }) });
       emit({ tier: `WebGL2 ${tier}` });
     } catch (err) {

@@ -1,0 +1,106 @@
+---
+// Direction B: "Mission Control" - an instrument panel with a visible 1px grid.
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/700.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import Preview from '../../layouts/Preview.astro';
+import Portrait from '../../components/Portrait.astro';
+import profile from '../../data/profile.json';
+import projects from '../../data/projects.json';
+const demos = projects.filter((p) => p.links.demo);
+---
+<Preview title="Preview B: Mission Control | Kartik Bajaj">
+  <div class="mc">
+    <header class="bar">
+      <span class="dot ok"></span><span>KBXAI // OPERATOR PROFILE</span>
+      <span class="sep hide-sm">SYS NOMINAL</span>
+      <span class="sep hide-sm">LOC AMBALA, IN</span>
+      <span class="sep">AVAILABLE NOW</span>
+    </header>
+
+    <main class="grid">
+      <section class="panel subject" aria-label="Portrait">
+        <p class="tag">SUBJECT 01</p>
+        <div class="crosshair"><Portrait /></div>
+        <p class="tag right">TRACKING · 478 LANDMARKS · DEPTH ON</p>
+      </section>
+
+      <section class="panel id">
+        <p class="tag">IDENTITY</p>
+        <h1 data-scramble="900">KARTIK BAJAJ</h1>
+        <p class="role" data-scramble="900">AI/LLM ENGINEER · INTERN CANDIDATE</p>
+        <p class="muted">IIT Madras · BS in Data Science and Applications · CGPA 8.04/10</p>
+      </section>
+
+      <section class="panel metric">
+        <p class="tag">BEST METRIC</p>
+        <p class="big">0.954</p>
+        <p class="muted">MACRO F1 · NOISY AUDIO GENRE CLASSIFICATION · PRIVATE IITM KAGGLE</p>
+      </section>
+
+      <section class="panel status">
+        <p class="tag">DEPLOYMENTS</p>
+        <ul>
+          {demos.map((p) => (
+            <li><span class="dot ok"></span><a href={p.links.demo}>{p.title}</a><span class="muted small">{p.links.demo!.includes('hf.space') || p.links.demo!.includes('huggingface') ? 'HF SPACE · MAY SLEEP' : 'VERCEL'}</span></li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="panel links">
+        <p class="tag">CHANNELS</p>
+        <a class="btn" href="/resume/">OPEN RESUME</a>
+        <a class="btn ghost" href={`mailto:${profile.email}`}>EMAIL</a>
+        <a class="btn ghost" href={profile.links.github}>GITHUB</a>
+        <a class="btn ghost" href={profile.links.linkedin}>LINKEDIN</a>
+      </section>
+
+      <section class="panel mission">
+        <p class="tag">MISSION</p>
+        <p>{profile.headline}. {profile.availability}.</p>
+      </section>
+    </main>
+  </div>
+</Preview>
+
+<style>
+  :global(body) { background: #050806; color: #d6f5d2; font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  .mc { max-width: 1280px; margin: 0 auto; padding: 0 20px 48px; }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 14px 0; font-size: 12px; letter-spacing: 0.12em; color: #86a886; border-bottom: 1px solid #1b2c20; }
+  .sep::before { content: '/ '; color: #2f5236; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #7cff8a; box-shadow: 0 0 8px #7cff8a; flex: none; }
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); border-left: 1px solid #1b2c20; border-top: 1px solid #1b2c20; margin-top: 20px; }
+  .panel { border-right: 1px solid #1b2c20; border-bottom: 1px solid #1b2c20; padding: 18px; position: relative; min-width: 0; }
+  .tag { font-size: 11px; letter-spacing: 0.16em; color: #86a886; margin: 0 0 12px; }
+  .tag.right { text-align: right; margin: 10px 0 0; }
+  .subject { grid-column: span 5; grid-row: span 3; }
+  .id { grid-column: span 7; }
+  .metric { grid-column: span 4; }
+  .status { grid-column: span 3; }
+  .links { grid-column: span 4; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+  .links .tag { width: 100%; }
+  .mission { grid-column: span 3; }
+  h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(44px, 6.4vw, 92px); line-height: 0.95; margin: 0; color: #7cff8a; text-shadow: 0 0 14px rgba(124, 255, 138, 0.35); letter-spacing: -0.01em; }
+  .role { font-size: clamp(13px, 1.4vw, 16px); letter-spacing: 0.12em; color: #ffb454; margin: 14px 0 6px; }
+  .muted { color: #86a886; font-size: 12px; letter-spacing: 0.04em; margin: 0; line-height: 1.6; }
+  .small { font-size: 10px; }
+  .big { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(64px, 8vw, 120px); line-height: 0.9; margin: 0 0 10px; color: #ffb454; text-shadow: 0 0 18px rgba(255, 180, 84, 0.35); letter-spacing: -0.03em; }
+  .status ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .status li { display: grid; grid-template-columns: 8px 1fr; gap: 4px 10px; align-items: center; font-size: 13px; }
+  .status li .small { grid-column: 2; }
+  .status a { color: #d6f5d2; text-decoration: none; }
+  .status a:hover { color: #7cff8a; }
+  .btn { display: inline-block; padding: 8px 12px; font-size: 12px; letter-spacing: 0.12em; text-decoration: none; background: #ffb454; color: #050806; font-weight: 500; }
+  .btn.ghost { background: none; color: #d6f5d2; border: 1px solid #2f5236; }
+  .btn.ghost:hover { border-color: #7cff8a; color: #7cff8a; }
+  .mission p:last-child { font-size: 13px; line-height: 1.6; margin: 0; }
+  .crosshair { position: relative; padding: 14px; }
+  .crosshair::before, .crosshair::after { content: ''; position: absolute; width: 22px; height: 22px; border: 1px solid #ffb454; }
+  .crosshair::before { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+  .crosshair::after { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+  @media (max-width: 900px) {
+    .subject, .id, .metric, .status, .links, .mission { grid-column: span 12; grid-row: auto; }
+    .hide-sm { display: none; }
+  }
+</style>

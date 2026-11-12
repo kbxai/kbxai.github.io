@@ -126,6 +126,22 @@ export function initTerminal(): void {
     else if (a.type === 'glow') setGlow(a.on);
     else if (a.type === 'motion') setPaused(a.paused);
     else if (a.type === 'ask') await handleAsk(a.question);
+    else if (a.type === 'face') {
+      const { default: face } = await import('../../data/portrait-ascii.txt?raw');
+      const pre = document.createElement('pre');
+      pre.className = 'face';
+      pre.setAttribute('aria-label', 'ASCII portrait of Kartik Bajaj');
+      for (const ch of face) {
+        if ('-/|\\'.includes(ch)) {
+          const s = document.createElement('span');
+          s.className = 'k-amber';
+          s.textContent = ch;
+          pre.append(s);
+        } else pre.append(ch);
+      }
+      log.append(pre);
+      log.scrollTop = log.scrollHeight;
+    }
     else if (a.type === 'experimental') {
       const desktop = window.matchMedia('(pointer: fine) and (min-width: 900px)').matches;
       if (!desktop || !motionAllowed()) {
