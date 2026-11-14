@@ -1,19 +1,25 @@
-// Decides whether the 3D ASCII hero may run, then lazy-loads it after the page has loaded.
+// Decides whether the 3D portrait field may run, then lazy-loads it after the page has loaded.
 import { motionAllowed } from './motion';
 
 export type Tier = 'high' | 'low' | 'none';
 
-export function detectTier(): Tier {
+/** Creating a WebGL2 context is expensive on slow devices, so it only happens when the hero is about to start. */
+function probeWebGL2(): boolean {
   try {
-    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    if (conn?.saveData) return 'none';
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl2', { failIfMajorPerformanceCaveat: true });
-    if (!gl) return 'none';
+    const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+    if (!gl) return false;
     gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return true;
   } catch {
-    return 'none';
+    return false;
   }
+}
+
+/** Cheap tier guess for scheduling (no GL context). `probe` adds the real WebGL2 check. */
+export function detectTier(probe = false): Tier {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData || !('WebGL2RenderingContext' in window)) return 'none';
+  if (probe && !probeWebGL2()) return 'none';
   const cores = navigator.hardwareConcurrency || 2;
   const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
   if (cores < 4 || (mem !== undefined && mem < 3)) return 'low';
@@ -27,6 +33,28 @@ const emit = (detail: Record<string, unknown>) => {
   window.dispatchEvent(new CustomEvent('kb:hero', { detail }));
 };
 
+/** Run `fn` once the largest contentful paint has been reported (or after 2.5 s as a fallback). */
+function afterLcp(fn: () => void): void {
+  let done = false;
+  const go = () => {
+    if (done) return;
+    done = true;
+    fn();
+  };
+  try {
+    const po = new PerformanceObserver((list) => {
+      if (list.getEntries().length) {
+        po.disconnect();
+        setTimeout(go, 200);
+      }
+    });
+    po.observe({ type: 'largest-contentful-paint', buffered: true });
+  } catch {
+    /* no LCP support: fall through to the timer */
+  }
+  setTimeout(go, 2500);
+}
+
 export function maybeStartHero(hostId = 'hero-art'): void {
   const host = document.getElementById(hostId);
   if (!host) return;
@@ -35,15 +63,15 @@ export function maybeStartHero(hostId = 'hero-art'): void {
 
   const start = async () => {
     if (stop || starting || !motionAllowed()) return;
-    const tier = detectTier();
+    const tier = detectTier(true);
     if (tier === 'none') {
       emit({ state: 'static (no WebGL2)' });
       return;
     }
     starting = true;
     try {
-      const { startHero } = await import('../three/portrait');
-      stop = startHero(host, { tier, onStats: (frameMs, state) => emit({ frameMs, state }) });
+      const { startField } = await import('../three/field');
+      stop = await startField(host, { tier, onStats: (frameMs, state) => emit({ frameMs, state }) });
       emit({ tier: `WebGL2 ${tier}` });
     } catch (err) {
       console.warn('[hero] disabled:', err);
@@ -62,21 +90,33 @@ export function maybeStartHero(hostId = 'hero-art'): void {
       return;
     }
     if (tier === 'high') {
-      later(1200);
+      afterLcp(() => later(900));
       return;
     }
-    // phones and low-end machines: wait for the first interaction (or 6 s) so loading never competes with reading
+    // phones and low-end machines: wait for a real interaction (or 6 s) so loading never competes with reading
+    const events = ['pointerdown', 'keydown', 'touchstart'];
+    let kicked = false;
     const kick = () => {
-      ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach((ev) => window.removeEventListener(ev, kick));
-      later(300);
+      if (kicked) return;
+      kicked = true;
+      events.forEach((ev) => window.removeEventListener(ev, kick));
+      afterLcp(() => later(300));
     };
-    ['pointerdown', 'scroll', 'keydown', 'touchstart'].forEach((ev) => window.addEventListener(ev, kick, { passive: true, once: true }));
+    events.forEach((ev) => window.addEventListener(ev, kick, { passive: true, once: true }));
     setTimeout(kick, 6000);
   };
 
   if (!motionAllowed()) emit({ state: 'static (motion off)' });
   if (document.readyState === 'complete') schedule();
   else window.addEventListener('load', schedule, { once: true });
+
+  // back/forward cache: the renderer is disposed on pagehide, so start it again when the page is restored
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      stop = null;
+      void start();
+    }
+  });
 
   window.addEventListener('kb:motion', ((e: CustomEvent<{ paused: boolean }>) => {
     if (e.detail.paused) {

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-BASE = "http://localhost:4321"
+BASE = "http://127.0.0.1:4321"
 OUT = Path(__file__).parent / "out"
 OUT.mkdir(exist_ok=True)
 PAGES = ["/", "/projects/messy-mashup/", "/resume/", "/lab/spectrogram/", "/does-not-exist"]
@@ -56,7 +56,7 @@ def run() -> None:
         check(page.locator("h1").count() == 1, "exactly one h1 on home")
 
         print("[3] 3D hero starts after load and is lazy")
-        page.wait_for_timeout(2500)
+        page.wait_for_timeout(4500)
         live = page.evaluate("document.getElementById('hero-art').classList.contains('live')")
         hud = page.locator('[data-hud="gpu"]').inner_text()
         check(live or "static" in hud, f"hero is live or reports a static reason (hud: {hud})")
@@ -97,7 +97,7 @@ def run() -> None:
         page.goto(BASE + "/", wait_until="load")
         page.wait_for_timeout(2500)
         check(page.locator("#hero-art canvas").count() == 0, "no canvas under reduced motion")
-        check(page.locator("#hero-fallback").is_visible(), "static ASCII fallback visible")
+        check(page.locator("#hero-fallback").is_visible(), "static portrait still visible")
         ctx.close()
 
         print("[7] no JavaScript: everything readable")

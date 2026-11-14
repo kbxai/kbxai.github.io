@@ -131,14 +131,7 @@ export function initTerminal(): void {
       const pre = document.createElement('pre');
       pre.className = 'face';
       pre.setAttribute('aria-label', 'ASCII portrait of Kartik Bajaj');
-      for (const ch of face) {
-        if ('-/|\\'.includes(ch)) {
-          const s = document.createElement('span');
-          s.className = 'k-amber';
-          s.textContent = ch;
-          pre.append(s);
-        } else pre.append(ch);
-      }
+      pre.textContent = face;
       log.append(pre);
       log.scrollTop = log.scrollHeight;
     }

@@ -1,14 +1,17 @@
 ---
-// ASCII self-portrait: static glowing fallback image, upgraded to the live WebGL renderer by src/lib/hero-loader.ts.
+// Hero portrait: a still render of the glyph field (also the no-WebGL and reduced-motion view),
+// upgraded to the live 3D field by src/lib/hero-loader.ts after the page has loaded.
+import meta from '../data/field-meta.json';
 interface Props { id?: string; class?: string }
 const { id = 'hero-art', class: cls = '' } = Astro.props;
+const [w, h] = meta.still;
 ---
 <div class={`portrait ${cls}`} id={id} aria-hidden="true">
-  <img id="hero-fallback" class="portrait-fallback" src="/portrait/fallback.webp" width="736" height="786" alt="" decoding="async" fetchpriority="low" />
+  <img id="hero-fallback" class="portrait-still" src="/field/still.webp" width={w} height={h} alt="" fetchpriority="high" />
 </div>
 <style>
-  .portrait { position: relative; width: 100%; aspect-ratio: 120 / 123; overflow: hidden; }
-  .portrait-fallback { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity 0.5s; }
-  .portrait.live .portrait-fallback { opacity: 0; }
+  .portrait { position: relative; width: 100%; height: 100%; }
+  .portrait-still { position: absolute; inset: 2%; width: 96%; height: 96%; object-fit: contain; transition: opacity 900ms var(--ease); }
+  .portrait.live .portrait-still { opacity: 0; }
   .portrait :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 </style>

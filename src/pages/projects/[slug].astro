@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Prompt from '../../components/Prompt.astro';
+import ProjectFigure from '../../components/ProjectFigure.astro';
 import projects from '../../data/projects.json';
 import profile from '../../data/profile.json';
 
@@ -9,63 +9,85 @@ export function getStaticPaths() {
 }
 const { p } = Astro.props as { p: (typeof projects)[number] };
 const i = projects.findIndex((x) => x.slug === p.slug);
-const others = projects.filter((x) => x.slug !== p.slug);
-const metric = p.metric.label === 'live' ? `live ${p.metric.value}` : `${p.metric.label} ${p.metric.value}`;
+const next = projects[(i + 1) % projects.length]!;
+const isLive = p.metric.label === 'live';
+const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" stroke="currentColor" stroke-width="1.4"/></svg>';
 ---
 <Base title={`${p.title} | Kartik Bajaj`} description={`${p.summary} ${p.context}, ${p.dates}.`}>
-  <article class="wrap man" aria-labelledby="t">
-    <Prompt cmd={`man ${p.slug}`} />
-    <p class="man-head muted" aria-hidden="true"><span>{p.slug.toUpperCase()}(1)</span><span>Projects of {profile.name}</span><span>{p.slug.toUpperCase()}(1)</span></p>
-    <h1 id="t">{p.title}</h1>
+  <article class="wrap proj" aria-labelledby="t">
+    <p class="back"><a class="link" href="/#work">All work</a></p>
+    <header class="head">
+      <p class="meta"><span class="n">{String(i + 1).padStart(2, '0')}</span><span>{p.context}</span><span class="dim">{p.dates}</span></p>
+      <h1 id="t" style={`view-transition-name: t-${p.slug}`}>{p.title}</h1>
+      <p class="sum">{p.summary}</p>
+      <p class="actions">
+        {p.links.demo && <a class="btn solid" href={p.links.demo}>Open the live demo<Fragment set:html={arrow} /></a>}
+        <a class={p.links.demo ? 'link' : 'btn solid'} href={p.links.github}>Source on GitHub{!p.links.demo && <Fragment set:html={arrow} />}</a>
+      </p>
+    </header>
 
-    <h2>NAME</h2>
-    <p class="ind">{p.slug} - {p.summary}</p>
+    <div class="grid">
+      <div class="facts">
+        <dl class="kv">
+          <dt>Result</dt><dd>{isLive ? `Live ${p.metric.value}` : <span class="amber">{p.metric.label} {p.metric.value}</span>}</dd>
+          <dt>Stack</dt><dd>{p.stack.join(', ')}</dd>
+          <dt>Context</dt><dd>{p.context}</dd>
+          <dt>When</dt><dd>{p.dates}</dd>
+        </dl>
+      </div>
+      <div class="figure-wrap" data-reveal><ProjectFigure slug={p.slug} results={p.results} /></div>
+    </div>
 
-    <h2>SYNOPSIS</h2>
-    <p class="ind">{p.context} | {p.dates} | <span class="amber">{metric}</span></p>
-    <p class="ind actions">
-      {p.links.demo && <a class="btn" href={p.links.demo}>live demo</a>}
-      <a class="btn ghost" href={p.links.github}>github</a>
-    </p>
-
-    <h2>DESCRIPTION</h2>
-    <ul class="ind bullets">{p.bullets.map((b) => <li>{b}</li>)}</ul>
+    <section aria-labelledby="what">
+      <h2 id="what" data-reveal>What I built</h2>
+      <ul class="bullets">{p.bullets.map((b) => <li data-reveal>{b}</li>)}</ul>
+    </section>
 
     {p.results.length > 0 && (
-      <>
-        <h2>RESULTS</h2>
-        <div class="ind table-scroll">
-          <table class="ascii">
-            <thead><tr><th scope="col">model / setup</th><th scope="col">Macro F1</th></tr></thead>
+      <section aria-labelledby="res">
+        <h2 id="res" data-reveal>Results</h2>
+        <div class="table-scroll" data-reveal>
+          <table class="data">
+            <thead><tr><th scope="col">Model or setup</th><th scope="col" style="text-align:right">Macro F1</th></tr></thead>
             <tbody>{p.results.map((r) => <tr><td>{r.model}</td><td class="num">{r.score}</td></tr>)}</tbody>
           </table>
         </div>
-      </>
+      </section>
     )}
 
-    <h2>STACK</h2>
-    <p class="ind">{p.stack.join(', ')}</p>
+    <section aria-labelledby="lim">
+      <h2 id="lim" data-reveal>Limits, stated plainly</h2>
+      <ul class="bullets">{p.limitations.map((l) => <li data-reveal>{l}</li>)}</ul>
+      <p class="note muted" data-reveal>{profile.aiAssisted}</p>
+    </section>
 
-    <h2>LIMITATIONS</h2>
-    <ul class="ind bullets">{p.limitations.map((l) => <li>{l}</li>)}</ul>
-
-    <h2>NOTES</h2>
-    <p class="ind muted">{profile.aiAssisted}</p>
-
-    <h2>SEE ALSO</h2>
-    <p class="ind">{others.map((o, k) => (<>{k > 0 && ', '}<a href={`/projects/${o.slug}/`}>{o.slug}(1)</a></>))}</p>
-
-    <p class="man-foot muted" aria-hidden="true"><span>kbxai</span><span>{p.dates}</span><span>{i + 1}/{projects.length}</span></p>
+    <a class="next" href={`/projects/${next.slug}/`} data-reveal>
+      <span class="dim">Next project</span>
+      <span class="next-title">{next.title}</span>
+    </a>
   </article>
 </Base>
 <style>
-  .man { padding-top: 2rem; }
-  .man h1 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin: 1rem 0 0.5rem; }
-  .man h2 { font-size: 1rem; margin: 1.6rem 0 0.4rem; letter-spacing: 0.08em; }
-  .ind { margin: 0 0 0 4ch; }
-  @media (max-width: 560px) { .ind { margin-left: 1ch; } }
-  .bullets { padding-left: 2ch; }
-  .bullets li { margin: 0.35rem 0; }
-  .man-head, .man-foot { display: flex; justify-content: space-between; gap: 12px; font-size: 0.8rem; flex-wrap: wrap; }
-  .man-foot { margin-top: 2.5rem; border-top: 1px dashed var(--border-strong); padding-top: 0.5rem; }
+  .proj { padding-top: calc(68px + clamp(2rem, 6vw, 4rem)); }
+  .back { margin-bottom: clamp(2rem, 5vw, 3.5rem); font-size: 0.92rem; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.88rem; color: var(--muted); margin-bottom: 1.4rem; }
+  .n { font-family: var(--mono); color: var(--amber); font-size: 0.8rem; padding-top: 0.15em; }
+  h1 { font-size: clamp(2.8rem, 7.5vw, 6.6rem); letter-spacing: -0.035em; max-width: 14ch; margin-bottom: 1.6rem; }
+  .sum { font-size: clamp(1.1rem, 1.8vw, 1.35rem); color: var(--muted); max-width: 46ch; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 2rem 4rem; margin: clamp(3rem, 7vw, 5rem) 0; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+  .grid .kv { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); }
+  section { margin-top: clamp(3rem, 7vw, 5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.5rem 4rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }
+  section h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); }
+  section > :not(h2) { grid-column: 2; }
+  .bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: 1.1rem; }
+  .bullets li { padding-left: 1.4rem; position: relative; max-width: 68ch; }
+  .bullets li::before { content: ''; position: absolute; left: 0; top: 0.72em; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .note { margin-top: 1.5rem; font-size: 0.94rem; max-width: 68ch; }
+  .next { display: flex; flex-direction: column; gap: 0.5rem; margin-top: clamp(4rem, 9vw, 7rem); padding: 2.5rem 0 0; border-top: 1px solid var(--line); text-decoration: none; }
+  .next-title { font-family: var(--serif); font-size: clamp(2rem, 5vw, 4rem); letter-spacing: -0.03em; line-height: 1.05; transition: color var(--t-fast) var(--ease); }
+  .next:hover .next-title { color: var(--amber); }
+  @media (max-width: 860px) {
+    .grid, section { grid-template-columns: 1fr; }
+    section > :not(h2) { grid-column: 1; }
+  }
 </style>

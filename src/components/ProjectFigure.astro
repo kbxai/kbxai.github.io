@@ -1,0 +1,76 @@
+---
+// A small, honest figure per project, built only from facts in projects.json:
+// a results chart for ML projects, the request flow for app projects.
+interface Result { model: string; score: string }
+interface Props { slug: string; results: Result[] }
+const { slug, results } = Astro.props;
+
+const FLOWS: Record<string, { steps: string[]; note: string }> = {
+  'interview-intelligence-ai': {
+    steps: ['Resume + job description', 'Gemini, output held to a Zod JSON schema', 'Interview report: answers, skill gaps, prep plan'],
+    note: 'JWT auth, token blacklist, rate limiting',
+  },
+  'llm-code-deployment-agent': {
+    steps: ['Natural-language brief', 'LLM writes a static web app', 'GitHub repo + Pages', 'Live URL polled until it is up'],
+    note: 'FastAPI background tasks, Pydantic validation',
+  },
+  medsyncpro: {
+    steps: ['Admin, doctor, patient roles', 'Appointments with server-side double-booking checks', 'Celery Beat on Redis: 08:00 reminders, monthly report'],
+    note: 'JWT authentication, Docker Compose',
+  },
+};
+
+// "~0.45-0.49" -> 0.47 for the bar length; the label keeps the original text
+const value = (s: string) => {
+  const nums = (s.match(/\d\.\d+/g) ?? []).map(Number);
+  return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
+};
+const flow = FLOWS[slug];
+const short = (m: string) => m.replace(/\s*\((validation|final leaderboard)\)/, '').replace('MFCC + Random Forest / Gradient Boosting', 'MFCC + RF / GB');
+const stage = (m: string) => (/final leaderboard/.test(m) ? 'leaderboard' : /validation/.test(m) ? 'validation' : '');
+---
+<figure class={`fig ${results.length ? 'chart' : 'flow'}`}>
+  {results.length > 0 ? (
+    <>
+      <figcaption>Macro F1 by model, from the project write-up</figcaption>
+      <ol class="bars">
+        {results.map((r, i) => (
+          <li class={i === (slug === 'messy-mashup' ? results.length - 1 : 0) ? 'best' : ''} style={`--v:${value(r.score)}`}>
+            <span class="m">{short(r.model)}{stage(r.model) && <span class="st"> {stage(r.model)}</span>}</span>
+            <span class="bar" aria-hidden="true"><span></span></span>
+            <span class="s">{r.score}</span>
+          </li>
+        ))}
+      </ol>
+    </>
+  ) : flow ? (
+    <>
+      <figcaption>How a request flows</figcaption>
+      <ol class="steps">{flow.steps.map((s) => <li>{s}</li>)}</ol>
+      <p class="note">{flow.note}</p>
+    </>
+  ) : null}
+</figure>
+
+<style>
+  .fig { margin: 0; height: 100%; min-height: 260px; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(160deg, var(--ink-3), var(--ink-2) 60%); display: flex; flex-direction: column; gap: 1.2rem; position: relative; overflow: hidden; }
+  .fig::after { content: ''; position: absolute; inset: auto -20% -60% auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(246, 163, 71, 0.10), transparent); pointer-events: none; }
+  figcaption { font-family: var(--mono); font-size: 0.74rem; color: var(--dim); }
+  .bars { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 0.95rem; }
+  .bars li { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 1rem; align-items: baseline; }
+  .m { font-size: 0.9rem; color: var(--muted); }
+  .st { color: var(--dim); font-family: var(--mono); font-size: 0.7rem; }
+  .s { font-family: var(--serif); font-size: 1.35rem; color: var(--paper); line-height: 1; }
+  .bar { grid-column: 1 / -1; height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; }
+  .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--dim); border-radius: inherit; transform-origin: left; transition: transform 1.1s var(--ease-emph) 0.15s; }
+  .best .s { color: var(--amber); }
+  .best .m { color: var(--paper); }
+  .best .bar span { background: var(--amber); box-shadow: 0 0 12px rgba(246, 163, 71, 0.5); }
+  :global(.reveal-on) [data-reveal]:not(.is-in) .bar span { transform: scaleX(0); }
+  .steps { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+  .steps li { position: relative; padding: 0.7rem 0 0.7rem 2.1rem; color: var(--paper); font-size: 0.98rem; border-left: 1px solid var(--line-2); margin-left: 0.45rem; }
+  .steps li::before { content: ''; position: absolute; left: -5px; top: 1.05rem; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); border: 1px solid var(--amber); }
+  .steps li:last-child { border-left-color: transparent; }
+  .steps li:last-child::before { background: var(--amber); box-shadow: 0 0 10px rgba(246, 163, 71, 0.6); }
+  .note { font-size: 0.84rem; color: var(--dim); }
+</style>

@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Prompt from '../components/Prompt.astro';
 import Portrait from '../components/Portrait.astro';
 import ProjectRow from '../components/ProjectRow.astro';
 import Terminal from '../components/Terminal.astro';
@@ -11,93 +10,169 @@ import github from '../data/github.json';
 const featured = new Set(projects.map((p) => p.links.github.split('/').pop()));
 const otherRepos = github.repos.filter((r) => !featured.has(r.name));
 const demos = projects.filter((p) => p.links.demo);
+const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
+const mm = bySlug['messy-mashup']!;
+const iitm = profile.education[0]!;
+const school = profile.education[1]!;
+const [first, ...rest] = profile.name.split(' ');
+
+const proof = [
+  { v: mm.metric.value, l: 'Macro F1 on a private IITM Deep Learning Kaggle competition', scramble: true },
+  { v: String(demos.length), l: 'projects with a live demo you can try today' },
+  { v: iitm.detail.match(/CGPA ([\d.]+)/)?.[1] ?? '', l: 'CGPA, BS in Data Science and Applications, IIT Madras', scramble: true },
+  { v: String(projects.length), l: 'projects, each with measured results and stated limits' },
+];
+
+const principles = [
+  {
+    t: 'Constrain the model, then trust it.',
+    d: 'In Interview Intelligence AI, Gemini’s output is held to a Zod JSON schema before anything reaches the user, and the API sits behind JWT auth, a token blacklist and rate limiting.',
+  },
+  {
+    t: 'Measure without leaking.',
+    d: 'For Messy Mashup I grouped validation folds by song (5-fold StratifiedGroupKFold), then moved from MFCC baselines to pretrained spectrogram models and a 0.954 final leaderboard score.',
+  },
+  {
+    t: 'Ship it, then check it is live.',
+    d: 'My deployment agent polls the live URL after every deploy. My apps run in Docker on Vercel, Render and Hugging Face Spaces.',
+  },
+];
+
+const journey = [
+  { when: school.dates, title: school.degree, text: `${school.institution}. ${school.detail}.` },
+  { when: iitm.dates.replace(' - Present', ''), title: `${iitm.degree}, IIT Madras`, text: iitm.detail.replaceAll(' | ', '. ') + '.' },
+  ...['llm-code-deployment-agent', 'messy-mashup', 'medsyncpro', 'comment-category-prediction', 'interview-intelligence-ai'].map((s) => {
+    const p = bySlug[s]!;
+    return { when: p.dates, title: p.title, text: p.summary, href: `/projects/${p.slug}/` };
+  }),
+  { when: 'Now', title: 'Looking for an AI/LLM Engineer internship', text: `${profile.availability}.`, now: true },
+];
+const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" stroke="currentColor" stroke-width="1.4"/></svg>';
 ---
 <Base
+  preloadImage="/field/still.webp"
   title="Kartik Bajaj | AI/LLM Engineer intern | IIT Madras"
   description="Kartik Bajaj, IIT Madras BS Data Science student seeking an AI/LLM Engineer internship. Live LLM apps, a Macro F1 0.954 audio classifier, projects, resume and contact."
 >
-  <section class="hero" aria-labelledby="whoami">
-    <div class="stage"><Portrait /></div>
-    <div class="scrim" aria-hidden="true"></div>
-    <div class="wrap copy">
-      <Prompt cmd="whoami" />
-      <h1 id="whoami" data-scramble="1000">{profile.name}</h1>
-      <p class="headline">{profile.headline}</p>
-      <p class="lead">
-        I build LLM apps and noise-robust ML models. My audio classifier scored a Macro F1 of{' '}
-        <span class="amber">0.954</span>{' '}in a private IITM Kaggle competition, and three of my projects have live demos.
+  <section class="hero" aria-labelledby="name">
+    <div class="art"><Portrait /></div>
+    <div class="wrap hero-copy">
+      <p class="kicker rise" style="--d:0ms">{profile.headline.replace('Seeking: ', 'Seeking an ').replace('Internship', 'internship')}</p>
+      <h1 id="name" class="name">
+        <span class="line"><span class="rise" style="--d:80ms">{first}</span></span>
+        <span class="line indent"><span class="rise" style="--d:180ms"><em>{rest.join(' ')}</em></span></span>
+      </h1>
+      <p class="lead rise" style="--d:320ms">
+        I build LLM apps and noise-robust ML models. My audio classifier scored a Macro F1 of{' '}<span class="amber">{mm.metric.value}</span>{' '}in a private IITM Kaggle competition, and three of my projects have live demos.
       </p>
-      <p class="muted">IIT Madras, BS in Data Science and Applications. {profile.availability}.</p>
-      <div class="actions">
-        <a class="btn" href="/resume/">Read my resume</a>
-        <a class="btn ghost" href={`mailto:${profile.email}`}>Email me</a>
-        <a class="btn ghost" href="#projects">See projects</a>
+      <div class="actions rise" style="--d:420ms">
+        <a class="btn solid" href="/resume/">Read my resume<Fragment set:html={arrow} /></a>
+        <a class="link" href={`mailto:${profile.email}`}>Email me</a>
       </div>
+    </div>
+    <div class="wrap hero-foot rise" style="--d:560ms">
+      <p>{profile.location}</p>
+      <p class="hide-sm">IIT Madras, BS in Data Science</p>
+      <a class="scroll-cue" href="#proof"><span>Scroll</span><span class="cue" aria-hidden="true"></span></a>
     </div>
   </section>
 
-  <section id="projects" class="block" aria-labelledby="projects-title">
+  <section id="proof" class="proof" aria-label="At a glance">
     <div class="wrap">
-      <h2 id="projects-title">Projects</h2>
-      <p class="intro muted">Five projects, in the same order as my resume. Each page shows the numbers I measured and what is still missing.</p>
-      <div class="rows">
-        {projects.map((p) => <ProjectRow project={p} />)}
-      </div>
-    </div>
-  </section>
-
-  <section id="terminal" class="block" aria-labelledby="term-title">
-    <div class="wrap">
-      <h2 id="term-title">Ask the site</h2>
-      <p class="intro muted">
-        Type <code>help</code>, or ask a question about my work. Answers come only from the facts on this site.
-        Try <code>whoami --face</code> to see how the portrait is drawn.
-      </p>
-      <Terminal />
-    </div>
-  </section>
-
-  <section id="skills" class="block" aria-labelledby="skills-title">
-    <div class="wrap two">
-      <div>
-        <h2 id="skills-title">Skills</h2>
-        <dl class="kv">
-          {profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}
-        </dl>
-        <p class="muted note">{profile.aiAssisted}</p>
-      </div>
-      <div>
-        <h2 id="education-title">Education</h2>
-        {profile.education.map((e) => (
-          <div class="edu">
-            <h3>{e.institution}</h3>
-            <p>{e.degree}, {e.dates}</p>
-            <p class="amber">{e.detail}</p>
-          </div>
-        ))}
-        <p class="muted">Coursework: {profile.coursework.join(', ')}.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="repos" class="block" aria-labelledby="repos-title">
-    <div class="wrap">
-      <h2 id="repos-title">More on GitHub</h2>
-      <p class="intro muted">Learning projects and coursework, read from the GitHub API when this site is built.</p>
-      <ul class="repos">
-        {otherRepos.map((r) => (
-          <li><a href={r.url}>{r.name}</a><span class="muted">{r.description ? ` ${r.description}` : ''}</span></li>
+      <ul>
+        {proof.map((x, i) => (
+          <li data-reveal={String(i * 90)}>
+            <span class="v" data-scramble={x.scramble ? '900' : undefined}>{x.v}</span>
+            <span class="l">{x.l}</span>
+          </li>
         ))}
       </ul>
     </div>
   </section>
 
-  <section id="contact" class="block" aria-labelledby="contact-title">
+  <section id="work" class="block" aria-labelledby="work-title">
     <div class="wrap">
-      <h2 id="contact-title">Contact</h2>
-      <p class="lead2">The fastest way to reach me is email. I answer within a day.</p>
-      <dl class="kv">
-        <dt>Email</dt><dd><a href={`mailto:${profile.email}`}>{profile.email}</a></dd>
+      <div class="section-head">
+        <h2 id="work-title" data-reveal>Selected work</h2>
+        <p data-reveal="120">Five projects, in the same order as my resume. Each page shows the numbers I measured and what is still missing.</p>
+      </div>
+      <div class="rows" id="projects">
+        {projects.map((p, i) => <ProjectRow project={p} index={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="approach" class="block" aria-labelledby="approach-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="approach-title" data-reveal>How I work</h2>
+        <p data-reveal="120">{profile.aiAssisted}</p>
+      </div>
+      <ul class="principles">
+        {principles.map((x, i) => (
+          <li data-reveal={String(i * 110)}>
+            <h3>{x.t}</h3>
+            <p>{x.d}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="toolkit" data-reveal>
+        <h3 class="tk-title">Toolkit</h3>
+        <dl class="kv">
+          {profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="terminal" class="block" aria-labelledby="term-title">
+    <div class="wrap narrow">
+      <div class="section-head">
+        <h2 id="term-title" data-reveal>Ask the site</h2>
+        <p data-reveal="120">
+          Type <code>help</code>, or ask a question about my work. Answers come only from the facts on this site.
+          Try <code>whoami --face</code> to see the portrait as text.
+        </p>
+      </div>
+      <div data-reveal><Terminal /></div>
+    </div>
+  </section>
+
+  <section id="journey" class="block" aria-labelledby="journey-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="journey-title" data-reveal>Path so far</h2>
+        <p data-reveal="120">From school in Ambala to IIT Madras and five shipped projects.</p>
+      </div>
+      <ol class="timeline">
+        {journey.map((j) => (
+          <li class={j.now ? 'now' : ''} data-reveal>
+            <span class="when">{j.when}</span>
+            <div>
+              <h3>{j.href ? <a href={j.href}>{j.title}</a> : j.title}</h3>
+              <p>{j.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="repos" data-reveal>
+        <h3 class="tk-title">More on GitHub</h3>
+        <p class="muted">Learning projects and coursework, read from the GitHub API when this site is built.</p>
+        <ul>
+          {otherRepos.map((r) => (
+            <li><a href={r.url}>{r.name}</a>{r.description && <span class="muted"> {r.description}</span>}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="block contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <h2 id="contact-title" data-reveal>Have an internship that needs an LLM engineer?</h2>
+      <p class="lead2" data-reveal="100">The fastest way to reach me is email. I answer within a day.</p>
+      <a class="mail" href={`mailto:${profile.email}`} data-reveal="160">{profile.email}</a>
+      <dl class="kv" data-reveal="220">
         <dt>Phone</dt><dd><a href={profile.phoneHref}>{profile.phone}</a></dd>
         <dt>GitHub</dt><dd><a href={profile.links.github}>github.com/kbxai</a></dd>
         <dt>LinkedIn</dt><dd><a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></dd>
@@ -109,38 +184,93 @@ const demos = projects.filter((p) => p.links.demo);
 </Base>
 
 <style>
-  .hero { position: relative; min-height: calc(100svh - 52px); overflow: hidden; display: grid; align-items: center; }
-  .stage { position: absolute; inset: 0 0 0 auto; width: min(58vw, 860px); display: grid; place-items: center; }
-  .stage :global(.portrait) { height: 100%; aspect-ratio: auto; }
-  .scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--bg) 0%, rgba(5, 8, 6, 0.96) 42%, rgba(5, 8, 6, 0.3) 70%, rgba(5, 8, 6, 0) 100%); }
-  .copy { position: relative; padding-block: 3rem; width: 100%; }
-  .copy > * { max-width: 40rem; }
-  .hero h1 { font-size: clamp(3.4rem, 10.5vw, 9rem); line-height: 0.88; letter-spacing: -0.04em; margin: 0.4rem 0 1.2rem; max-width: 9ch; }
-  .headline { font-family: var(--display); font-weight: 500; font-size: clamp(1.15rem, 2.2vw, 1.5rem); margin: 0 0 1rem; color: var(--fg); }
-  .lead { font-size: clamp(1rem, 1.5vw, 1.12rem); line-height: 1.7; margin: 0 0 1rem; }
-  .actions { margin-top: 1.5rem; }
+  /* Hero */
+  .hero { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding-top: 68px; overflow: clip; }
+  .art { position: absolute; top: 0; bottom: 0; right: 0; width: min(58vw, 980px); }
+  .art::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--ink) 0%, transparent 22%), linear-gradient(0deg, var(--ink) 0%, transparent 18%); }
+  .hero-copy { position: relative; width: 100%; max-width: var(--maxw); align-self: end; padding-bottom: clamp(2rem, 6vh, 4rem); }
+  .hero-copy > * { max-width: 40rem; }
+  .kicker { color: var(--muted); font-size: 0.98rem; margin-bottom: 1.2rem; }
+  .name { font-size: clamp(4.6rem, 12.6vw, 12.5rem); line-height: 0.84; letter-spacing: -0.045em; margin: 0 0 1.8rem; max-width: none; }
+  .name .line { display: block; overflow: clip; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+  .name .indent { padding-left: 0.62em; }
+  .name em { font-style: italic; }
+  .lead { font-size: clamp(1.04rem, 1.4vw, 1.18rem); color: var(--muted); max-width: 36rem; margin-bottom: 2rem; }
+  .lead .amber { color: var(--amber); }
+  .hero-foot { position: relative; width: 100%; max-width: none; display: flex; gap: 1rem 2.5rem; align-items: center; padding-block: 1.25rem 1.5rem; border-top: 1px solid var(--line); color: var(--dim); font-size: 0.86rem; }
+  .hero-foot { padding-right: calc(var(--gutter) + 130px); }
+  .scroll-cue { margin-left: auto; display: inline-flex; align-items: center; gap: 0.7rem; color: var(--muted); text-decoration: none; }
+  .cue { width: 1px; height: 28px; background: linear-gradient(var(--amber), transparent); position: relative; overflow: hidden; }
+  .cue::after { content: ''; position: absolute; left: 0; top: -50%; width: 1px; height: 50%; background: var(--paper); animation: cue 2.2s var(--ease) infinite; }
+  @keyframes cue { to { top: 110%; } }
+  :global(:root[data-motion='paused']) .cue::after { animation: none; }
 
-  .block { padding: 4.5rem 0 1rem; }
-  .intro { max-width: 60ch; margin: 0 0 1.5rem; }
-  .rows { border-bottom: 1px solid var(--border-strong); }
-  .two { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 3rem; }
-  .note { margin-top: 1.25rem; max-width: 56ch; }
-  .edu { margin: 0 0 1.25rem; }
-  .edu h3 { margin: 0 0 0.2rem; font-size: 1.02rem; }
-  .edu p { margin: 0.15rem 0; }
-  .repos { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
-  .repos li { border-left: 2px solid var(--border-strong); padding-left: 0.9rem; }
-  .lead2 { font-family: var(--display); font-size: clamp(1.25rem, 2.6vw, 1.8rem); margin: 0 0 1.5rem; max-width: 30ch; line-height: 1.2; }
-  code { color: var(--accent2); }
+  /* Hero entrance: lines rise once (text is in the DOM from the first byte, so LCP is unaffected) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(:root:not([data-motion='paused'])) .rise { animation: rise 1.05s var(--ease-emph) both; animation-delay: var(--d, 0ms); }
+    .name .rise { display: inline-block; animation-name: rise-line; }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); filter: blur(8px); } }
+  @keyframes rise-line { from { transform: translateY(104%); } }
 
   @media (max-width: 860px) {
-    .hero { min-height: 0; display: block; }
-    .stage { position: relative; inset: auto; width: 100%; height: min(78vw, 360px); }
-    .scrim { display: none; }
-    .copy { padding-top: 0.5rem; }
-    .two { grid-template-columns: 1fr; gap: 2rem; }
-    .block { padding-top: 3.25rem; }
+    .hero { min-height: 0; grid-template-rows: auto auto auto; padding-top: 60px; }
+    .art { position: relative; width: 100%; height: min(92vw, 520px); grid-row: 1; }
+    .art::after { background: linear-gradient(0deg, var(--ink) 0%, transparent 30%); }
+    .hero-copy { margin-top: -4.5rem; padding-bottom: 2rem; }
+    .hide-sm, .scroll-cue { display: none; }
   }
+
+  /* Proof strip */
+  .proof ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+  .proof li { padding: clamp(1.8rem, 4vw, 2.8rem) clamp(1rem, 2vw, 2rem) clamp(1.8rem, 4vw, 2.8rem) 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .proof li + li { border-left: 1px solid var(--line); padding-left: clamp(1rem, 2vw, 2rem); }
+  .proof .v { font-family: var(--serif); font-size: clamp(2.6rem, 5vw, 4.2rem); line-height: 0.9; letter-spacing: -0.03em; }
+  .proof li:first-child .v { color: var(--amber); text-shadow: 0 0 28px rgba(246, 163, 71, 0.28); }
+  .proof .l { color: var(--muted); font-size: 0.9rem; max-width: 24ch; }
+  @media (max-width: 860px) {
+    .proof ul { grid-template-columns: 1fr 1fr; }
+    .proof li:nth-child(3) { border-left: 0; padding-left: 0; }
+    .proof li:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  }
+
+  .rows { border-bottom: 1px solid var(--line); }
+
+  /* How I work */
+  .principles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; border-top: 1px solid var(--line); padding-top: 2.5rem; }
+  .principles h3 { font-size: clamp(1.5rem, 2.3vw, 1.95rem); margin-bottom: 1rem; }
+  .principles p { color: var(--muted); }
+  .toolkit, .repos { margin-top: clamp(3.5rem, 7vw, 5.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: 1.5rem 4rem; border-top: 1px solid var(--line); padding-top: 2.5rem; }
+  .tk-title { font-size: 1.7rem; }
+  .repos .muted { grid-column: 1; margin-top: -0.5rem; font-size: 0.92rem; }
+  .repos ul { grid-column: 2; grid-row: 1 / span 2; list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+  .repos li { font-size: 0.95rem; }
+  .repos li a { font-family: var(--mono); font-size: 0.86rem; }
+  @media (max-width: 860px) {
+    .principles { grid-template-columns: 1fr; gap: 2rem; }
+    .toolkit, .repos { grid-template-columns: 1fr; }
+    .repos .muted, .repos ul { grid-column: 1; grid-row: auto; margin-top: 0; }
+  }
+
+  .narrow { max-width: 1040px; }
+
+  /* Timeline (a real sequence, oldest first) */
+  .timeline { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .timeline li { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); gap: 0.5rem 3rem; padding: 1.6rem 0; border-bottom: 1px solid var(--line); position: relative; }
+  .when { font-family: var(--mono); font-size: 0.8rem; color: var(--dim); padding-top: 0.5rem; }
+  .timeline h3 { font-size: clamp(1.35rem, 2vw, 1.7rem); margin-bottom: 0.4rem; }
+  .timeline h3 a { text-decoration: none; }
+  .timeline p { color: var(--muted); max-width: 62ch; }
+  .timeline .now .when { color: var(--amber); }
+  .timeline .now h3 { color: var(--amber); }
+  @media (max-width: 640px) { .timeline li { grid-template-columns: 1fr; } .when { padding-top: 0; } }
+
+  /* Contact */
+  .contact h2 { font-size: clamp(2.6rem, 6.4vw, 5.8rem); max-width: 16ch; margin-bottom: 1.6rem; }
+  .lead2 { color: var(--muted); font-size: 1.1rem; margin-bottom: 2.2rem; }
+  .mail { display: inline-block; font-family: var(--serif); font-size: clamp(1.7rem, 4.4vw, 3.4rem); letter-spacing: -0.02em; text-decoration: none; margin-bottom: 3rem; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 2px no-repeat; transition: background-size var(--t-slow) var(--ease-emph), color var(--t-fast); overflow-wrap: anywhere; }
+  .mail:hover { background-size: 100% 2px; color: var(--paper); }
+  .contact .kv { max-width: 860px; border-top: 1px solid var(--line); padding-top: 2rem; }
 </style>
 
 <script>

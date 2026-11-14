@@ -32,7 +32,8 @@ function syncButton(): void {
   if (!btn) return;
   const paused = isPaused();
   btn.setAttribute('aria-pressed', String(paused));
-  btn.textContent = paused ? 'resume motion' : 'pause motion';
+  const label = btn.querySelector('.txt');
+  if (label) label.textContent = paused ? 'Motion off' : 'Motion on';
 }
 
 export function initMotionToggle(): void {

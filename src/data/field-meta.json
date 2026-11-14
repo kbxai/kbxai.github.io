@@ -1,0 +1,13 @@
+{
+ "count": 8422,
+ "cols": 140,
+ "rows": 106,
+ "aspect": 1.2114285714285715,
+ "ramp": "`':;!=r*xoa2%#&@",
+ "stride": 11,
+ "layout": "f16 x,y,z | u8 tone,rim,feat,glyph,rand",
+ "still": [
+  640,
+  775
+ ]
+}

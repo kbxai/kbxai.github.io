@@ -1,49 +1,83 @@
 ---
 import { existsSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
-import Prompt from '../components/Prompt.astro';
 import profile from '../data/profile.json';
 import projects from '../data/projects.json';
 const hasPdf = existsSync(new URL('../../public/resume.pdf', import.meta.url));
 ---
 <Base title="Resume | Kartik Bajaj" description="Resume of Kartik Bajaj: IIT Madras BS Data Science, seeking an AI/LLM Engineer internship.">
   <article class="wrap cv" aria-labelledby="cv-title">
-    <Prompt cmd="cat resume.txt" />
-    <h1 id="cv-title">{profile.name}</h1>
-    <p><strong>{profile.headline}</strong></p>
-    <p class="muted">{profile.availability}</p>
-    <p>{profile.location} | <a href={`mailto:${profile.email}`}>{profile.email}</a> | <a href={profile.phoneHref}>{profile.phone}</a> | <a href={profile.links.github}>github.com/kbxai</a> | <a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></p>
-    {hasPdf && <p class="actions"><a class="btn" href="/resume.pdf" download>download PDF</a></p>}
+    <header class="cv-head">
+      <h1 id="cv-title">{profile.name}</h1>
+      <p class="hl">{profile.headline}</p>
+      <p class="muted">{profile.availability}</p>
+      <p class="contact">{profile.location} <span aria-hidden="true">/</span> <a href={`mailto:${profile.email}`}>{profile.email}</a> <span aria-hidden="true">/</span> <a href={profile.phoneHref}>{profile.phone}</a> <span aria-hidden="true">/</span> <a href={profile.links.github}>github.com/kbxai</a> <span aria-hidden="true">/</span> <a href={profile.links.linkedin}>linkedin.com/in/kbxai</a></p>
+      <p class="actions">
+        {hasPdf && <a class="btn solid" href="/resume.pdf" download>Download PDF</a>}
+        <button class="btn" type="button" id="print">Print this page</button>
+      </p>
+    </header>
 
-    <h2>Education</h2>
-    {profile.education.map((e) => (<div class="item"><h3>{e.institution}, {e.degree} <span class="muted">| {e.dates}</span></h3><p>{e.detail}</p></div>))}
-    <p><span class="muted">Coursework:</span> {profile.coursework.join(', ')}</p>
-
-    <h2>Projects</h2>
-    {projects.map((p) => (
-      <div class="item">
-        <h3><a href={`/projects/${p.slug}/`}>{p.title}</a> <span class="muted">| {p.context} | {p.dates}</span></h3>
-        <p class="muted">{p.stack.join(', ')} | <a href={p.links.github}>github</a>{p.links.demo && <> | <a href={p.links.demo}>live demo</a></>}</p>
-        <ul>{p.bullets.map((b) => <li>{b}</li>)}</ul>
+    <section aria-labelledby="edu">
+      <h2 id="edu">Education</h2>
+      <div>
+        {profile.education.map((e) => (
+          <div class="item">
+            <h3>{e.institution}</h3>
+            <p class="muted">{e.degree}, {e.dates}</p>
+            <p>{e.detail}</p>
+          </div>
+        ))}
+        <p class="muted small">Coursework: {profile.coursework.join(', ')}.</p>
       </div>
-    ))}
+    </section>
 
-    <h2>Skills</h2>
-    <dl class="kv">{profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}</dl>
+    <section aria-labelledby="proj">
+      <h2 id="proj">Projects</h2>
+      <div>
+        {projects.map((p) => (
+          <div class="item">
+            <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
+            <p class="muted small">{p.context}, {p.dates}. {p.stack.join(', ')}. <a href={p.links.github}>GitHub</a>{p.links.demo && <>, <a href={p.links.demo}>live demo</a></>}</p>
+            <ul>{p.bullets.map((b) => <li>{b}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="sk">
+      <h2 id="sk">Skills</h2>
+      <dl class="kv">{profile.skills.map((s) => (<><dt>{s.group}</dt><dd>{s.items.join(', ')}</dd></>))}</dl>
+    </section>
   </article>
 </Base>
 <style>
-  .cv { padding-top: 2rem; max-width: 880px; }
-  .cv h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); margin-bottom: 0.4rem; }
-  .cv h2 { font-size: 1.1rem; margin: 2rem 0 0.75rem; border-bottom: 1px dashed var(--border-strong); padding-bottom: 0.25rem; }
-  .cv h3 { font-size: 0.98rem; }
-  .cv .item { margin-bottom: 1.1rem; }
-  .cv ul { margin: 0.35rem 0 0; padding-left: 2.5ch; }
-  .cv li { margin: 0.25rem 0; }
-  .cv p { margin: 0.35rem 0; }
+  .cv { padding-top: calc(68px + clamp(2rem, 6vw, 4rem)); max-width: 1080px; }
+  .cv-head { margin-bottom: clamp(2.5rem, 6vw, 4rem); display: grid; gap: 0.7rem; }
+  h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -0.04em; }
+  .hl { font-size: 1.2rem; }
+  .contact { color: var(--muted); }
+  .contact span { color: var(--dim); margin: 0 0.25rem; }
+  .actions { margin-top: 1rem; }
+  .actions button { background: none; cursor: pointer; font: inherit; }
+  section { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 1rem 3rem; padding: 2.5rem 0; border-top: 1px solid var(--line); }
+  section h2 { font-size: 1.9rem; }
+  .item { margin-bottom: 1.8rem; }
+  .item h3 { font-size: 1.45rem; margin-bottom: 0.25rem; }
+  .item h3 a { text-decoration: none; }
+  .item ul { margin: 0.6rem 0 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
+  .item li::marker { color: var(--amber); }
+  .small { font-size: 0.92rem; }
+  @media (max-width: 760px) { section { grid-template-columns: 1fr; } }
   @media print {
-    :global(body::after), :global(.top), :global(footer.site), :global(.prompt), .actions { display: none !important; }
-    :global(body) { background: #fff; color: #000; }
-    :global(h1), :global(h2), :global(h3), :global(a) { color: #000 !important; text-shadow: none !important; }
+    :global(body) { background: #fff !important; color: #000 !important; font-size: 11pt; }
+    :global(footer.site) { display: none !important; }
+    .cv { padding-top: 0; }
+    .actions { display: none; }
+    h1, h2, h3, a, .muted, .contact { color: #000 !important; }
+    section { border-color: #ccc; break-inside: avoid-page; padding: 1rem 0; }
   }
 </style>
+<script>
+  document.getElementById('print')?.addEventListener('click', () => window.print());
+</script>

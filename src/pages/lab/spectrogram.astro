@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Prompt from '../../components/Prompt.astro';
 import projects from '../../data/projects.json';
 const mm = projects.find((p) => p.slug === 'messy-mashup')!;
 const pipeline = String.raw`
@@ -11,7 +10,6 @@ const pipeline = String.raw`
 ---
 <Base title="Spectrogram lab | Kartik Bajaj" description="Watch audio turn into a glowing ASCII log-mel spectrogram, the input my noisy-audio genre classifier (Macro F1 0.954) learned from.">
   <article class="wrap lab" aria-labelledby="lab-title">
-    <Prompt cmd="./lab/spectrogram --live" />
     <h1 id="lab-title">Spectrogram lab</h1>
     <p>
       My <a href={`/projects/${mm.slug}/`}>{mm.title}</a> model never hears music. It sees a log-mel spectrogram:
@@ -21,11 +19,11 @@ const pipeline = String.raw`
     <pre class="pipe" aria-label="Model pipeline: noisy mix to log-mel spectrogram, into ResNet-50 and an Audio Spectrogram Transformer, combined in a 60/40 ensemble with test-time augmentation, final Macro F1 0.954.">{pipeline}</pre>
 
     <div id="lab-controls" class="controls" hidden>
-      <button class="btn" type="button" id="src-synth">play synthesized mashup</button>
-      <label class="btn ghost file">use your own audio file<input type="file" id="src-file" accept="audio/*" /></label>
-      <button class="btn ghost" type="button" id="src-mic">use microphone</button>
-      <button class="btn ghost" type="button" id="src-stop" disabled>stop</button>
-      <label class="noise" for="noise">background noise <input id="noise" type="range" min="0" max="80" value="20" /> <output id="noise-out" for="noise">20%</output></label>
+      <button class="btn solid" type="button" id="src-synth">Play a synthesized mashup</button>
+      <label class="btn ghost file">Use your own audio file<input type="file" id="src-file" accept="audio/*" /></label>
+      <button class="btn ghost" type="button" id="src-mic">Use the microphone</button>
+      <button class="btn ghost" type="button" id="src-stop" disabled>Stop</button>
+      <label class="noise" for="noise">Background noise <input id="noise" type="range" min="0" max="80" value="20" /> <output id="noise-out" for="noise">20%</output></label>
     </div>
     <p id="lab-status" class="muted" role="status" aria-live="polite">Press a button to start. Audio never leaves your browser.</p>
     <canvas id="spec" class="spec" aria-hidden="true"></canvas>
@@ -40,19 +38,23 @@ const pipeline = String.raw`
   </article>
 </Base>
 <style>
-  .lab { padding-top: 2rem; }
-  .lab h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); margin-bottom: 0.75rem; }
-  .lab h2 { font-size: 1.05rem; margin: 2rem 0 0.5rem; }
-  .pipe { color: var(--muted); font-size: clamp(9px, 1.4vw, 13px); overflow-x: auto; padding: 8px 0; margin: 1rem 0; }
-  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 1rem 0 0.5rem; }
+  .lab { padding-top: calc(68px + clamp(2rem, 6vw, 4rem)); max-width: 1100px; }
+  .lab h1 { font-size: clamp(2.8rem, 7vw, 5.6rem); letter-spacing: -0.035em; margin-bottom: 1.4rem; }
+  .lab > p { max-width: 64ch; color: var(--muted); font-size: 1.06rem; }
+  .lab h2 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin: 3.5rem 0 1rem; }
+  .lab ul { color: var(--muted); max-width: 72ch; display: grid; gap: 0.6rem; padding-left: 1.2rem; }
+  .lab li::marker { color: var(--amber); }
+  .pipe { color: var(--muted); font-family: var(--mono); font-size: clamp(12px, 1.3vw, 13px); overflow-x: auto; padding: 1.25rem 1.4rem; margin: 2rem 0; border: 1px solid var(--line); border-radius: 14px; background: var(--ink-2); }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 1.5rem 0 0.75rem; }
   .controls button { font: inherit; cursor: pointer; background: none; }
+  .controls .solid { background: var(--paper); }
   .controls button:disabled { opacity: 0.45; cursor: default; }
   .file { position: relative; cursor: pointer; }
   .file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .file:focus-within { outline: 2px solid var(--accent2); outline-offset: 3px; }
-  .noise { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); }
-  .noise input { accent-color: var(--accent2); }
-  .spec { display: block; width: 100%; height: clamp(220px, 42vw, 420px); background: #070a08; border: 1px solid var(--border-strong); }
+  .file:focus-within { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .noise { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 0.92rem; margin-left: 0.5rem; }
+  .noise input { accent-color: var(--amber); }
+  .spec { display: block; width: 100%; height: clamp(220px, 42vw, 420px); background: var(--ink-2); border: 1px solid var(--line); border-radius: 14px; margin-top: 1rem; }
 </style>
 <script>
   import { initLab } from '../../lib/spectrogram';

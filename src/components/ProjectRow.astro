@@ -1,38 +1,52 @@
 ---
+import ProjectFigure from './ProjectFigure.astro';
 interface Project {
   slug: string; title: string; context: string; dates: string; stack: string[];
   metric: { label: string; value: string }; summary: string; links: { demo?: string; github: string };
+  results: { model: string; score: string }[];
 }
-interface Props { project: Project }
-const { project: p } = Astro.props;
+interface Props { project: Project; index: number }
+const { project: p, index } = Astro.props;
 const isLive = p.metric.label === 'live';
+const n = String(index + 1).padStart(2, '0');
+const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" stroke="currentColor" stroke-width="1.4"/></svg>';
 ---
-<article class="row">
-  <div class="head">
-    <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
+<article class="row" data-reveal>
+  <div class="fig-col"><ProjectFigure slug={p.slug} results={p.results} /></div>
+  <div class="text">
+    <p class="meta"><span class="n">{n}</span><span>{p.context}</span><span class="dim">{p.dates}</span></p>
+    <h3><a href={`/projects/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a></h3>
     <p class="metric" aria-label={isLive ? 'Has a live demo' : `${p.metric.label} ${p.metric.value}`}>
-      {isLive ? 'Live' : <><span class="v">{p.metric.value}</span> <span class="l">{p.metric.label}</span></>}
+      {isLive ? <><span class="live" aria-hidden="true"></span>Live demo</> : <><span class="v">{p.metric.value}</span> <span class="l">{p.metric.label}</span></>}
+    </p>
+    <p class="sum">{p.summary}</p>
+    <ul class="stack" aria-label="Stack">{p.stack.map((s) => <li>{s}</li>)}</ul>
+    <p class="actions">
+      <a class="link" href={`/projects/${p.slug}/`}>Results and limits<span class="sr-only"> for {p.title}</span><Fragment set:html={arrow} /></a>
+      {p.links.demo && <a class="link" href={p.links.demo}>Live demo<span class="sr-only"> of {p.title}</span><Fragment set:html={arrow} /></a>}
+      <a class="link" href={p.links.github}>Source<span class="sr-only"> for {p.title} on GitHub</span><Fragment set:html={arrow} /></a>
     </p>
   </div>
-  <p class="sum">{p.summary}</p>
-  <p class="meta">{p.context}, {p.dates}. {p.stack.join(', ')}.</p>
-  <p class="links">
-    {p.links.demo && <a href={p.links.demo}>Live demo<span class="sr-only"> of {p.title}</span></a>}
-    <a href={p.links.github}>Source on GitHub<span class="sr-only"> for {p.title}</span></a>
-    <a href={`/projects/${p.slug}/`}>Results and limits<span class="sr-only"> for {p.title}</span></a>
-  </p>
 </article>
 
 <style>
-  .row { padding: 1.6rem 0 1.7rem; border-top: 1px solid var(--border-strong); display: grid; gap: 0.45rem; }
-  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-  h3 { margin: 0; font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.5rem); line-height: 1.08; letter-spacing: -0.02em; }
-  h3 a { color: var(--fg); text-decoration: none; }
-  h3 a:hover { color: var(--accent); text-shadow: var(--glow); }
-  .metric { margin: 0; color: var(--accent2); font-weight: 700; white-space: nowrap; }
-  .metric .v { font-family: var(--display); font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: -0.02em; text-shadow: var(--glow-amber); }
-  .metric .l { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
-  .sum { margin: 0; max-width: 62ch; }
-  .meta { margin: 0; color: var(--muted); font-size: 0.88rem; max-width: 70ch; }
-  .links { margin: 0.35rem 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-size: 0.92rem; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.75rem, 5vw, 5rem); padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--line); align-items: stretch; }
+  .text { display: flex; flex-direction: column; gap: 1rem; justify-content: center; }
+  .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.86rem; color: var(--muted); }
+  .n { font-family: var(--mono); color: var(--amber); font-size: 0.8rem; padding-top: 0.15em; }
+  h3 { font-size: clamp(1.9rem, 3.6vw, 3rem); letter-spacing: -0.025em; }
+  h3 a { text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); }
+  h3 a:hover { color: var(--paper); background-size: 100% 1px; }
+  .metric { display: flex; align-items: baseline; gap: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+  .metric .v { font-family: var(--serif); font-size: 2rem; color: var(--amber); line-height: 1; }
+  .live { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 4px var(--amber-soft), 0 0 12px rgba(246, 163, 71, 0.55); align-self: center; }
+  .sum { color: var(--paper); max-width: 52ch; font-size: 1.04rem; }
+  .stack { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0; }
+  .stack li { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 0.28rem 0.65rem; }
+  .actions { margin-top: 0.4rem; font-size: 0.94rem; }
+  .row:hover :global(.fig) { border-color: var(--line-2); }
+  @media (max-width: 860px) {
+    .row { grid-template-columns: 1fr; }
+    .fig-col { order: 2; }
+  }
 </style>
