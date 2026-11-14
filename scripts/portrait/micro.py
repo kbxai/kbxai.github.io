@@ -103,6 +103,17 @@ def main() -> None:
     tone = np.where(hair, np.clip(0.10 + tone * 1.1, 0, 0.42), tone)
     # beard + moustache: one smooth, darker mass with soft edges (photo stubble -> clean grooming)
     bm = cv2.GaussianBlur(C.smooth_mask(B["beard"], 5).astype(np.float32), (0, 0), 4)
+    # close the gap above the middle of the upper lip: a soft band along the lip line joins the two halves
+    P = B["pts"]
+    up = P[[61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291]].copy()
+    mw = float(np.hypot(*(P[291] - P[61])))
+    up[:, 1] -= mw * 0.095                                   # sit on the moustache line, above the lip edge
+    bridge = np.zeros((H, W), np.float32)
+    cv2.polylines(bridge, [np.round(up * 4).astype(np.int32)], False, 1.0, int(round(mw * 0.15)), cv2.LINE_AA, shift=2)
+    xs_ = np.arange(W, dtype=np.float32)[None, :]
+    span = np.clip(np.minimum(xs_ - (P[61, 0] + mw * 0.12), (P[291, 0] - mw * 0.12) - xs_) / (mw * 0.1), 0, 1)
+    bridge = cv2.GaussianBlur(bridge * span, (0, 0), mw * 0.025) * 0.8
+    bm = np.maximum(bm, bridge)
     smooth = cv2.GaussianBlur(tone, (0, 0), 4.5)
     tone = tone * (1 - bm) + np.clip(smooth * 0.5, 0.06, 0.3) * bm
     # skin: remove remaining speckle on cheeks and forehead, keep features sharp
