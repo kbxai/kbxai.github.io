@@ -62,18 +62,69 @@ async function askRemote(question: string): Promise<string | null> {
   }
 }
 
+const STORE = 'kb.term';
+const MAX_SAVED = 60_000;
+
+/** Is the user typing somewhere else (so "/" must not steal the key)? */
+function typingElsewhere(t: EventTarget | null): boolean {
+  const el = t as HTMLElement | null;
+  return !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+}
+
 export function initTerminal(): void {
   const root = document.getElementById('term');
   const log = document.getElementById('term-log');
   const form = document.getElementById('term-form') as HTMLFormElement | null;
   const input = document.getElementById('term-input') as HTMLInputElement | null;
-  if (!root || !log || !form || !input) return;
+  const dialog = document.getElementById('term-dialog') as HTMLDialogElement | null;
+  const launch = document.getElementById('term-launch') as HTMLButtonElement | null;
+  if (!root || !log || !form || !input || !dialog) return;
   root.hidden = false;
+  if (launch) launch.hidden = false;
+  document.querySelectorAll<HTMLElement>('[data-term-ui]').forEach((el) => (el.hidden = false));
   let cursor = -1;
+  let booted = false;
+
+  // the conversation follows the visitor from page to page (this tab only)
+  const save = () => {
+    try {
+      while (log.innerHTML.length > MAX_SAVED && log.firstChild) log.firstChild.remove();
+      sessionStorage.setItem(STORE, JSON.stringify({ html: log.innerHTML, history: ctx.history.slice(-50) }));
+    } catch {
+      /* storage blocked or full: the session still works, it just is not kept */
+    }
+  };
+  const restore = (): boolean => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(STORE) ?? 'null') as { html?: string; history?: string[] } | null;
+      if (!saved?.html) return false;
+      log.innerHTML = saved.html;
+      ctx.history.push(...(saved.history ?? []));
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   const print = (lines: Line[]) => {
     for (const l of lines) log.append(lineEl(l));
     log.scrollTop = log.scrollHeight;
+  };
+
+  const open = () => {
+    if (!dialog.open) dialog.showModal();
+    if (!booted) {
+      booted = true;
+      if (restore()) log.scrollTop = log.scrollHeight;
+      else void boot();
+    }
+    requestAnimationFrame(() => input.focus());
+  };
+  const close = () => dialog.open && dialog.close();
+  const runCommand = (cmd: string) => {
+    open();
+    input.value = cmd;
+    form.requestSubmit();
   };
 
   const boot = async () => {
@@ -96,6 +147,7 @@ export function initTerminal(): void {
       print([l]);
       if (first && motionAllowed()) await wait(220);
     }
+    save();
   };
 
   const handleAsk = async (question: string) => {
@@ -108,6 +160,7 @@ export function initTerminal(): void {
     log.scrollTop = log.scrollHeight;
     await settle(out, remote ?? localAnswer(question, ctx));
     log.scrollTop = log.scrollHeight;
+    save();
   };
 
   form.addEventListener('submit', async (e) => {
@@ -120,9 +173,15 @@ export function initTerminal(): void {
     const res = run(value, ctx);
     print(res.lines);
     const a = res.action;
+    save();
     if (!a) return;
-    if (a.type === 'clear') log.replaceChildren();
-    else if (a.type === 'open') window.location.href = a.href;
+    if (a.type === 'clear') {
+      log.replaceChildren();
+      save();
+    } else if (a.type === 'open') {
+      close();
+      window.location.href = a.href;
+    }
     else if (a.type === 'glow') setGlow(a.on);
     else if (a.type === 'motion') setPaused(a.paused);
     else if (a.type === 'ask') await handleAsk(a.question);
@@ -134,6 +193,7 @@ export function initTerminal(): void {
       pre.textContent = face;
       log.append(pre);
       log.scrollTop = log.scrollHeight;
+      save();
     }
     else if (a.type === 'experimental') {
       const desktop = window.matchMedia('(pointer: fine) and (min-width: 900px)').matches;
@@ -142,6 +202,7 @@ export function initTerminal(): void {
         return;
       }
       const mod = a.name === 'fluid' ? await import('../../three/fluid') : await import('../../three/crt');
+      close();
       mod.start();
     }
   });
@@ -163,10 +224,37 @@ export function initTerminal(): void {
         e.preventDefault();
         input.value = c;
       }
-    } else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape' && input.value) {
+      // first Escape clears the line, the next one closes the dialog
+      e.preventDefault();
       input.value = '';
     }
   });
 
-  void boot();
+  launch?.addEventListener('click', open);
+  document.getElementById('term-close')?.addEventListener('click', close);
+  // click on the dimmed backdrop (outside the panel) closes it
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) close();
+  });
+  // any element on any page can open the terminal or run a command in it
+  document.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement | null)?.closest<HTMLElement>('[data-term-cmd], [data-term-open]');
+    if (!el) return;
+    e.preventDefault();
+    const cmd = el.dataset.termCmd;
+    if (cmd) runCommand(cmd);
+    else open();
+  });
+  // "/" or Ctrl/Cmd+K from anywhere on the site
+  document.addEventListener('keydown', (e) => {
+    if (dialog.open) return;
+    const slash = e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey && !typingElsewhere(e.target);
+    const cmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
+    if (slash || cmdK) {
+      e.preventDefault();
+      open();
+    }
+  });
+  if (location.hash === '#ask') open();
 }

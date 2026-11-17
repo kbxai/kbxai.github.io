@@ -7,6 +7,7 @@ import '@fontsource/jetbrains-mono/latin-400.css';
 import '../styles/global.css';
 import profile from '../data/profile.json';
 import Hud from '../components/Hud.astro';
+import Terminal from '../components/Terminal.astro';
 import serif400 from '@fontsource/newsreader/files/newsreader-latin-400-normal.woff2?url';
 import serifItalic from '@fontsource/newsreader/files/newsreader-latin-400-italic.woff2?url';
 import sans400 from '@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2?url';
@@ -86,6 +87,7 @@ const [first, ...rest] = profile.name.split(' ');
         </nav>
       </div>
     </header>
+    <Terminal />
     <main id="main" tabindex="-1">
       <slot />
     </main>

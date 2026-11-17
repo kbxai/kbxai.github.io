@@ -4,13 +4,14 @@ Usage:
   python .claude/skills/webapp-testing/scripts/with_server.py --server "npx astro preview --port 4321" --port 4321 -- python tests/e2e/run_e2e.py
 """
 import json
+import os
 import sys
 import urllib.request
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-BASE = "http://127.0.0.1:4321"
+BASE = os.environ.get("E2E_BASE", "http://127.0.0.1:4321")
 OUT = Path(__file__).parent / "out"
 OUT.mkdir(exist_ok=True)
 PAGES = ["/", "/projects/messy-mashup/", "/resume/", "/lab/spectrogram/", "/does-not-exist"]
@@ -64,7 +65,13 @@ def run() -> None:
         scripts = page.evaluate("[...document.querySelectorAll('script[src]')].map(s => s.src)")
         check(not any("three" in s for s in scripts), "three.js is not in the initial HTML scripts")
 
-        print("[4] terminal commands")
+        print("[4] terminal commands (site-wide dialog)")
+        check(page.locator("#term-launch").is_visible(), "terminal launcher is visible")
+        page.locator("body").click(position={"x": 5, "y": 5})
+        page.keyboard.press("/")
+        page.wait_for_timeout(300)
+        check(page.evaluate("document.getElementById('term-dialog').open"), "'/' opens the terminal")
+        check(page.evaluate("document.activeElement.id") == "term-input", "terminal input has focus when opened")
         page.fill("#term-input", "whoami")
         page.keyboard.press("Enter")
         check("8.04" in page.locator("#term-log").inner_text(), "whoami prints CGPA 8.04")
@@ -75,6 +82,15 @@ def run() -> None:
         page.fill("#term-input", "cat messy")
         page.keyboard.press("Enter")
         check("0.954" in page.locator("#term-log").inner_text(), "cat messy shows 0.954")
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(200)
+        check(not page.evaluate("document.getElementById('term-dialog').open"), "Escape closes the terminal")
+        page.goto(BASE + "/projects/messy-mashup/", wait_until="load")
+        page.click("#term-launch")
+        page.wait_for_timeout(300)
+        check(page.evaluate("document.getElementById('term-dialog').open"), "launcher opens the terminal on a project page")
+        check("0.954" in page.locator("#term-log").inner_text(), "conversation carries over to another page")
+        page.keyboard.press("Escape")
         page.close()
 
         print("[5] keyboard path")
@@ -87,7 +103,7 @@ def run() -> None:
         for _ in range(40):
             page.keyboard.press("Tab")
             seen.add(page.evaluate("document.activeElement.tagName + ':' + (document.activeElement.id || document.activeElement.textContent.trim().slice(0,30))"))
-        check(any(s.startswith("INPUT:term-input") for s in seen), "terminal input reachable by Tab")
+        check(any(s.startswith("BUTTON:term-launch") for s in seen), "terminal launcher reachable by Tab")
         check(len(seen) > 15, f"Tab moves through many elements ({len(seen)})")
         page.close()
 
@@ -106,7 +122,7 @@ def run() -> None:
         page.goto(BASE + "/", wait_until="load")
         txt = page.inner_text("body")
         check("Messy Mashup" in txt and "0.954" in txt and "Contact" in txt, "content present without JS")
-        check(page.locator("#term").is_hidden(), "terminal hidden without JS")
+        check(page.locator("#term").is_hidden() and page.locator("#term-launch").is_hidden(), "terminal and launcher hidden without JS")
         ctx.close()
         browser.close()
 

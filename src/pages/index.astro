@@ -2,7 +2,6 @@
 import Base from '../layouts/Base.astro';
 import Portrait from '../components/Portrait.astro';
 import ProjectRow from '../components/ProjectRow.astro';
-import Terminal from '../components/Terminal.astro';
 import profile from '../data/profile.json';
 import projects from '../data/projects.json';
 import github from '../data/github.json';
@@ -130,11 +129,22 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
       <div class="section-head">
         <h2 id="term-title" data-reveal>Ask the site</h2>
         <p data-reveal="120">
-          Type <code>help</code>, or ask a question about my work. Answers come only from the facts on this site.
-          Try <code>whoami --face</code> to see the portrait as text.
+          A small terminal that knows this site. Type <code>help</code>, or ask a question about my work; answers come
+          only from the facts here. It is on every page: use the button in the corner or press <kbd>/</kbd>.
         </p>
       </div>
-      <div data-reveal><Terminal /></div>
+      <div class="ask" data-reveal data-term-ui hidden>
+        <button class="ask-bar" type="button" data-term-open>
+          <span class="who">visitor@kbxai:~$</span><span class="ph">ask anything about my work</span><kbd aria-hidden="true">/</kbd>
+        </button>
+        <ul class="ask-try" aria-label="Commands to try">
+          <li><button type="button" data-term-cmd="help">help</button></li>
+          <li><button type="button" data-term-cmd="ls projects">ls projects</button></li>
+          <li><button type="button" data-term-cmd="cat messy-mashup">cat messy-mashup</button></li>
+          <li><button type="button" data-term-cmd="whoami --face">whoami --face</button></li>
+          <li><button type="button" data-term-cmd="ask what is your strongest project?">ask what is your strongest project?</button></li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -271,6 +281,17 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
   .mail { display: inline-block; font-family: var(--serif); font-size: clamp(1.7rem, 4.4vw, 3.4rem); letter-spacing: -0.02em; text-decoration: none; margin-bottom: 3rem; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 2px no-repeat; transition: background-size var(--t-slow) var(--ease-emph), color var(--t-fast); overflow-wrap: anywhere; }
   .mail:hover { background-size: 100% 2px; color: var(--paper); }
   .contact .kv { max-width: 860px; border-top: 1px solid var(--line); padding-top: 2rem; }
+  .ask { display: grid; gap: 1.1rem; }
+  .ask[hidden] { display: none; }
+  .ask-bar { display: flex; align-items: center; gap: 0.9rem; width: 100%; padding: 1.05rem 1.2rem; border: 1px solid var(--line-2); border-radius: 14px; background: linear-gradient(180deg, var(--ink-3), var(--ink-2)); color: var(--dim); font: 400 0.95rem/1.2 var(--mono); text-align: left; cursor: text; transition: border-color var(--t-fast) var(--ease); }
+  .ask-bar:hover { border-color: var(--amber); }
+  .ask-bar .who { color: var(--amber); white-space: nowrap; }
+  .ask-bar .ph { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ask-bar kbd, .section-head kbd { font: 500 0.75rem/1 var(--mono); color: var(--muted); border: 1px solid var(--line-2); border-radius: 6px; padding: 0.22rem 0.45rem; }
+  .ask-try { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .ask-try button { font: 400 0.8rem/1 var(--mono); color: var(--muted); background: transparent; border: 1px solid var(--line-2); border-radius: 999px; padding: 0.5rem 0.8rem; cursor: pointer; transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease); }
+  .ask-try button:hover { color: var(--paper); border-color: var(--amber); }
+  @media (max-width: 520px) { .ask-bar .who { display: none; } }
 </style>
 
 <script>
