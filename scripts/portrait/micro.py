@@ -83,14 +83,8 @@ def render_still(xs, ys, tones, rims, glyphs, ramp, cols, rows, cw=8) -> Image.I
     return Image.alpha_composite(Image.alpha_composite(bg, glow), img).convert("RGB")
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--primary", required=True)
-    ap.add_argument("--cols", type=int, default=140)
-    ap.add_argument("--publish", action="store_true", help="also write public/field + src/data outputs")
-    a = ap.parse_args()
-    OUT.mkdir(parents=True, exist_ok=True)
-    B = C.build_base(Path(a.primary))
+def studio_maps(B: dict) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Toned portrait (studio look), soft person mask and rim light, at work resolution."""
     H, W = B["H"], B["W"]
     tone = tone_map(B)
     # studio look: shoulders and shirt fall off into the dark, hair gets a lift so the quiff reads
@@ -99,23 +93,48 @@ def main() -> None:
     fall = np.clip(1 - (yy - chin) / (H - chin + 1e-6), 0, 1) ** 1.4
     tone = np.where(yy > chin, tone * (0.25 + 0.75 * fall), tone)
     tone = np.where(B["shirt"], tone * 0.55, tone)
-    hair = B["hair"]
-    tone = np.where(hair, np.clip(0.10 + tone * 1.1, 0, 0.42), tone)
-    # beard + moustache: one smooth, darker mass with soft edges (photo stubble -> clean grooming)
-    bm = cv2.GaussianBlur(C.smooth_mask(B["beard"], 5).astype(np.float32), (0, 0), 4)
-    # close the gap above the middle of the upper lip: a soft band along the lip line joins the two halves
-    P = B["pts"]
-    up = P[[61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291]].copy()
-    mw = float(np.hypot(*(P[291] - P[61])))
-    up[:, 1] -= mw * 0.095                                   # sit on the moustache line, above the lip edge
-    bridge = np.zeros((H, W), np.float32)
-    cv2.polylines(bridge, [np.round(up * 4).astype(np.int32)], False, 1.0, int(round(mw * 0.15)), cv2.LINE_AA, shift=2)
+    # hair: lift and cap, but only where the pixel really is dark, so skin caught by the hair mask
+    # (top of the forehead, temples) keeps its own tone instead of turning into a flat grey band
+    hw = np.clip((B["skin_med"] * 0.85 - B["blur"]) / (B["skin_med"] * 0.25), 0, 1)
+    hw = cv2.GaussianBlur(B["hair"].astype(np.float32) * hw, (0, 0), 2)
+    tone = tone * (1 - hw) + np.clip(0.10 + tone * 1.1, 0, 0.42) * hw
+    # wall showing through the mask edge (grey, no chroma, bright): render it as dark hair, not as a light rim
+    lab = cv2.cvtColor(B["bgr"], cv2.COLOR_BGR2LAB).astype(np.float32)
+    wall = (lab[..., 1] < 135) & (lab[..., 2] < 140) & (B["blur"] > B["skin_med"] * 0.6) & ~B["face"] & ~B["shirt"]
+    ww = cv2.GaussianBlur((wall & B["person"]).astype(np.float32), (0, 0), 3)
+    tone = tone * (1 - ww) + 0.16 * ww
+    # beard + moustache: follow the hair that is really there (pixels darker than their local skin),
+    # not a landmark-shaped mask, so the beard sits where it is in the photo. Shadow on the jaw edge is
+    # lighter than real beard relative to its surroundings, so it stays skin.
+    L = B["lm"]                                               # this photo's own landmarks (not the averaged shape)
+    fw = B["face_w"]
+    yy_ = np.arange(H, dtype=np.float32)[:, None]
     xs_ = np.arange(W, dtype=np.float32)[None, :]
-    span = np.clip(np.minimum(xs_ - (P[61, 0] + mw * 0.12), (P[291, 0] - mw * 0.12) - xs_) / (mw * 0.1), 0, 1)
-    bridge = cv2.GaussianBlur(bridge * span, (0, 0), mw * 0.025) * 0.8
-    bm = np.maximum(bm, bridge)
-    smooth = cv2.GaussianBlur(tone, (0, 0), 4.5)
-    tone = tone * (1 - bm) + np.clip(smooth * 0.5, 0.06, 0.3) * bm
+    nose_y = float(L[2, 1])
+    zone = cv2.dilate(B["face"].astype(np.uint8), np.ones((int(fw * 0.05),) * 2, np.uint8)) > 0
+    zone &= (yy_ > nose_y + fw * 0.02) & B["person"] & ~B["lips"]
+    hairy = np.clip((0.84 - B["ratio"]) / 0.22, 0, 1) * zone
+    bm = cv2.GaussianBlur(cv2.morphologyEx(hairy, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8)), (0, 0), 3)
+    # moustache bridge: find the real moustache line (darkest row above the upper lip in each column) and
+    # join its two halves along that line, so the bridge never floats above or below it
+    mw = float(np.hypot(*(L[291] - L[61])))
+    lip_top = np.interp(xs_[0], L[[61, 40, 37, 0, 267, 270, 291], 0], L[[61, 40, 37, 0, 267, 270, 291], 1])
+    line = []
+    for x in range(int(L[61, 0]), int(L[291, 0]) + 1):
+        y_hi, y_lo = int(lip_top[x] - mw * 0.22), int(lip_top[x] - mw * 0.01)
+        col = B["blur"][y_hi:y_lo, x]
+        line.append((x, y_hi + int(np.argmin(col)) if len(col) else lip_top[x]))
+    line = np.array(line, np.float32)
+    k = max(3, int(mw * 0.12)) | 1
+    line[:, 1] = np.convolve(np.pad(line[:, 1], k // 2, mode="edge"), np.ones(k) / k, mode="valid")
+    bridge = np.zeros((H, W), np.float32)
+    cv2.polylines(bridge, [np.round(line * 4).astype(np.int32)], False, 1.0, max(2, int(round(mw * 0.09))), cv2.LINE_AA, shift=2)
+    span = np.clip(np.minimum(xs_ - (L[61, 0] + mw * 0.15), (L[291, 0] - mw * 0.15) - xs_) / (mw * 0.12), 0, 1)
+    bridge = cv2.GaussianBlur(bridge * span, (0, 0), mw * 0.02) * 0.7
+    bm = np.clip(np.maximum(bm, bridge), 0, 1)
+    smooth = cv2.GaussianBlur(tone, (0, 0), 3.0)
+    # same texture range as the hair, so the beard reads as a beard (visible strokes), not as a hole
+    tone = tone * (1 - bm) + np.clip(0.12 + smooth * 0.4, 0.18, 0.38) * bm
     # skin: remove remaining speckle on cheeks and forehead, keep features sharp
     skin = (B["skin"] & ~B["beard"]).astype(np.float32)
     feat0 = np.zeros((H, W), np.float32)
@@ -133,6 +152,19 @@ def main() -> None:
     edge = np.clip(1 - dist / (W * 0.018), 0, 1) * (person > 0.5)
     nx = B["normal"][..., 0]
     rim = np.clip(edge * (0.35 + 0.9 * np.clip(nx, 0, 1)) + 0.25 * np.clip(nx - 0.3, 0, 1) * (person > 0.5), 0, 1)
+    return tone, soft, rim
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--primary", required=True)
+    ap.add_argument("--cols", type=int, default=140)
+    ap.add_argument("--publish", action="store_true", help="also write public/field + src/data outputs")
+    a = ap.parse_args()
+    OUT.mkdir(parents=True, exist_ok=True)
+    B = C.build_base(Path(a.primary))
+    H, W = B["H"], B["W"]
+    tone, soft, rim = studio_maps(B)
 
     # features to keep crisp (eyes, brows, mouth, nostrils)
     feat = np.zeros((H, W), np.float32)
@@ -177,7 +209,6 @@ def main() -> None:
     if a.publish:
         pub = C.ROOT / "public" / "field"
         pub.mkdir(parents=True, exist_ok=True)
-        rec.tofile(pub / "points.bin")
         small = still.resize((640, round(640 * still.height / still.width)), Image.LANCZOS)
         small.save(pub / "still.webp", "WEBP", quality=60, method=6)
         meta["still"] = list(small.size)
@@ -194,7 +225,7 @@ def main() -> None:
         while lines and not lines[-1]:
             lines.pop()
         (C.ROOT / "src" / "data" / "portrait-ascii.txt").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-        print("published public/field/points.bin, still.webp", still.size, "and src/data/field-meta.json")
+        print("published public/field/still.webp", still.size, "and src/data/field-meta.json")
     print(f"{n} points, grid {cols}x{rows}, ramp '{ramp}', bin {(OUT / 'points.bin').stat().st_size // 1024} KB")
 
 

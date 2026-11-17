@@ -1,56 +1,56 @@
 
 
 
-                                   *xx*rr=r*r***
+                                   ****rr=rrr***
                                **r==rrr!=r=====r*x
-                           xrrrrr=**=rrrrr***r******r*r**xx
-                       x********r****r=rr*********====!=rrrrr**
-                     x*rr*******====r=r*******r****r==!!!======r*x
+                           xrrrrr=**=rrrrr***r******rrr***x
+                       xr*******r****r=rr*********====!=rrrrr**
+                     x*rr*******====r=r*******r****r==!!!======r**
                    x*********r==!!;;!!******rrr=**rr==!!!;!!====rr*
                  x****r*******r===!;;=****r*r=!r=rrr!!!=!!!;==r==r*x
                x*r*******r**rr===!!!!r**rr=r=====rr==!==!!;!r=r=r***
               *!=r**=***rr=rrr==!====*rr===rr=r======rr==!!=====**rr*
              x!!!r**=r**r=!=!!!===r***********rrrrr==rr==rrrrrr***r!!r
              r!!!==r=!=rr======r****xxxxxxoooxxx*******r*rrrrrrrr!!!!!!x
-            *!!!!!=!!!;;!!!==r** oaa2222222%%222aaaaooxxx*****rr=!!!!!!!
-            r=!!!===!!!!==r**x a22%%%%%%%%%%##%%2222aaaoooox***rr=!!!!!=o
-            =!!!===!!!!=r**xoa22%%%%%%%%%%%%%%%%%2aoaoooooao****r===!;!=r
-           r=!!!!!!!!==r*xoaaa22222%%%%222222%2%%%222aaooooo******rr==!r
-           rr=!!!!!!=r**xoaa2222%%%%%%%%22%%%%###%#%%2aaaooox****rrr=ro
-           *rr=!===*****xoaa22%%%############&&&&&#%aooxxxxxx**x*rr==r
-            *=**rr******xooa22%%%####&&&&&&&&&&#2xxr!!;;!!!!!!!=**=!=
-             rxx*=r*****xxoooooooxxxx*xa%&###%ar!;;::;=*xxxx***r!*r!o
-                orrr***xxr=!;!!!!!;;;=!!*2%%%2ar==r*xo2%%aaoxxoorr==
-                  *r**rx!!=*xoooooxxxxx*xoa%%2orr*xoxoo=x;;o==xox*r=a
-                   *rrr*!xa2%%%%%2o***oo**x2#2or==rx%##o*=xorr*oao*=*** 2
-                    *rr*ra2oxxo2!r=;x%**rrxa22o*rrro2####%22aaaaaoxr**x%%o
-                     =!**aax=*%#2rrroa2xr**oa2o*r=rrx2#&&&&##%%%2ax***oa%o
-                     o!rxaaoxxoaa2%##%ax*r*2%#%a*==r*o2%%#######%2ax**2%2o
-                  aaa2rrxooaaa2%#&&#%22xr*2#&&&#%or=ro22%%%%%###%%2a**o%
-                  %#a2*r*xoa2%%%#%%%%%2x*2#&&@@&%oxa2oa##%%%%%%222aox**xo*
-                  2%a%*rrxa2%%#%%%%%##%a2*=ra#&#=;!a#ox%&&###%%22aoox*r***
-                   o%&x=roa22%%%%%##&&2o2ax*oa%2xaao**oa%#&&#%%2aaooxrr*x
-                   a%&o!roaa222%%##&&%ox*xooaoooxx*==!!!r*2##%%%2aoor!rx
-                    o2r;rxoa222%##&#%axr==!=rr***xoxrr=!;:;!o%#%2oox=!
-                     *=;=xaa2%%###%or!;;=*xoa222aoox*rr***r!!o%#axx*!!
-                       *!*oa2%####*;:;rxx*xx**r***x*r==!!raao%#%axxr!
-                        r!*o22%##%=;ro*===**o2%%%%2axr=r*xoa%##2ox==
-                          !*aa22%%oo2ax***xa2%#&&&##%2aaa2aa2%%2ao*=
-                           =xoaoa%##2a22%%######%%%#%%%%%%22aaaaao*!
-                             *xooo2%2%%%###&&#%2ox%##&&#%%2axr=r*=!!
-                             !*xooaaa2%###&&&&&###&###%%2ao*!::;;!=!
-                               rxoao*xa22%%##%#22aaaoooox*=;::;!r**r;
-                                !r*x=!!==rxxoxx*==*r==rr!;:::;r*xxx*!;==
-                                 !!!=;:::;!!!=!!=!!!;;;:::::=*xxoox*=;!rrrr**r=
-                                 !;!xxr;:::::;;;;;;:;;;;;;!*ooaaaooxr!!rrr****rrr===
-                               =!!!=xaax=!!!;;;::!;!==!!=r*ooaaaaox*r!!=*r****rrrrrrrrr=
+            *!!!!!=!!!;;!!!==r**xoaa2222222%%222aaaaooxxx*****rr=!!!!!!!
+            r=!!!===!!!!==r**xxa22%%%%%%%%%%##%%2222aaaoooox***rr=!!!!!=o
+            =!!!===!!!!=r**xoa22%%%%%%%%%%%%%%%%%2aoaoooooao****r===!;!==
+           r=!!!!!!!!==r*xoaaa22222%%%%222222%2%%%222aaooooox*****rr==!ro
+           rr=!!!!!!=r**xoaa2222%%%%%%%%22%%%%###%#%%2aaaooox****rrr=rx x
+           *rr=!===*****xoaa22%%%############&&&&&#%aooxxxxxx****rr==rr
+            r==rrr******xooa22%%%####&&&&&&&&&&#2xxr!!;;!!!!!!!=**=!==r
+             r==r=r*****xxoooooooxxxx*xa%&###%ar!;;::;=*xxxx***r!*r!=!*
+               x*rrr***xxr=!;!!!!!;;;=!!*2%%%2ar==r*xo2%%aaoxxoorr=!!;=
+                 rrr**rx!!=*xoooooxxxxx*xoa%%2orr*xoxoo=x;;o==xox*r====*
+                  rrrrr*!xa2%%%%%2o***oo**x2#2or==rx%##o*=xorr*oao*=***ox
+                   ==rr*ra2oxxo2!r=;x%**rrxa22o*rrro2####%22aaaaaoxr**x%2r
+                   !!!!**aax=*%#2rrroa2xr**oa2o*r=rrx2#&&&&##%%%2ax***oa%x
+                   r=r!rxaaoxxoaa2%##%ax*r*2%#%a*==r*o2%%#######%2ax**2%ax
+                  aaa2rrxooaaa2%#&&#%22xr*2#&&&#%or=ro22%%%%%###%%2a**o%2*
+                  %#a2*r*xoa2%%%#%%%%%2x*2#&&@@&%oxa2oa##%%%%%%222aox**xxr
+                  2%a%*rrxa2%%#%%%%%##%a2*=ra#&#=;!a#ox%&&###%%22aoox*r**r
+                  ao%&x=roa22%%%%%##&&2o2ax*oa%2xaao**oa%#&&#%%2aaooxr**x
+                   a%&o=*oaa222%%##&&%ox*xoa%####2orr===rx2##%%%2aoo*=rx
+                    o2*!*xoa222%##&#%axrrr=r*xooxxoo**r=!!!=o%#%2ooor=*
+                     *r==xaa2%%###%o*=!!rxa222aaaoox*rr*xx*==o%#axxxr!
+                      *x=*oa2%####x!!!rxx*xx**r***x*r==!!raao%#%aoox=
+                        r=xo22%##%r!*o*===**o2%%%%2axr=r*xoa%##2ooxr
+                          !*aa22%%oo2ax***xa2%#&&&##%2aaa2aa2%%2aoor
+                           =xoaoa%##2a22%%######%%%#%%%%%%22aaaaaox=
+                             *xooo2%2%%%###&&#%2ox%##&&#%%2ax*r*x*=!
+                             !*xooaaa2%###&&&&&###&###%%2ao*=!!===r!
+                               rxoao*xa22%%##%#22aaaoooox*r!!!!=r**r;
+                                !r*xr==rr*xxoxx**r**rrr*=!!!!!r*xxx*!;==
+                                 !!!=!!!!====r=r*r*r=!!!!!!;=*xxoox*=;!rrrr**r=
+                                 ;;!xo*!;!!!!!!!==!!!!!!;;!*ooaaaooxr!!rrr****rrr===
+                               =!!!=xaao=!!!!!;:;!!!==!!=r*ooaaaaox*r!!=*r****rrrrrrrrr=
                          r=!======;=*oaoxrr*xoooooxxxxxx**xoaaaaoox*r!!=rrrrr*rr=rrr====!!;;
                        ==!;======!!r**xoox***oooooooooxx*xoooooooxx*r=!rrrrrrr=====rr=!!!!!!
                     =!!!=;=======!==rr*xoxx**xxxoooooxxxxxxooxxxx***r!!======!!======!!!!;;;
                  ;;!!!!!!!=======!!=rrr*xx****xxxxxxxxx**xxxxx*****r=!====!======!!!!!;;;;;;
           ;;;;;;!!!!!;!!!!!!!!!!!!;!====r*********************rrrr=!;!!!!!!!!=!!!!!!!!!;;;;;
     ::::;;;;;;;;;!!!;;!;!!!!!!!!!!;:;;!!!=rrrrrr*****rrrrrrrrr====;;!!!!!!;;;!!!!!;;!!!!!;;!
-;;;::;::::::;;;;;;;;;;;;!!!!;;;!!!;::;;;;!==rrrrrrrrrrrr====!!!;;;;;!!!;;;;::;;;;;;;;!!!!!!!
+:;;::;::::::;;;;;;;;;;;;!!!!;;;!!!;::;;;;!==rrrrrrrrrrrr====!!!;;;;;!!!;;;;::;;;;;;;;!!!!!!!
 ::;;;;:::::;;;;;:;;;;;;;;;;;:;;;;;;;::::;;!============!;;;;;:::;;;;;;;;;;;;::;;;;:;;;;;;;;;
 :::;;;:::;;;;;;;;;;;;;;;;;;:;;;;;;;;;;::::;;!!!!!!!;;;;;;:::::;;;;;;;;;;;;;;;:::;::;;;;;;;;;
 ::;;;;;;;;;;;;;;;::;;;;;;::;;;;;;;;;;;;::::::;;:::::::::::;;;;;;;;;;;;::;;;;;::::::;;;;;;;;;

@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectFigure from '../../components/ProjectFigure.astro';
+import ProjectShot from '../../components/ProjectShot.astro';
 import projects from '../../data/projects.json';
 import profile from '../../data/profile.json';
 
@@ -25,6 +26,8 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
         <a class={p.links.demo ? 'link' : 'btn solid'} href={p.links.github}>Source on GitHub{!p.links.demo && <Fragment set:html={arrow} />}</a>
       </p>
     </header>
+
+    {p.links.demo && <div class="hero-shot" data-reveal><ProjectShot slug={p.slug} demo={p.links.demo} title={p.title} eager /></div>}
 
     <div class="grid">
       <div class="facts">
@@ -74,6 +77,7 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
   .n { font-family: var(--mono); color: var(--amber); font-size: 0.8rem; padding-top: 0.15em; }
   h1 { font-size: clamp(2.8rem, 7.5vw, 6.6rem); letter-spacing: -0.035em; max-width: 14ch; margin-bottom: 1.6rem; }
   .sum { font-size: clamp(1.1rem, 1.8vw, 1.35rem); color: var(--muted); max-width: 46ch; margin-bottom: 2rem; }
+  .hero-shot { margin-top: clamp(1rem, 3vw, 2rem); }
   .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 2rem 4rem; margin: clamp(3rem, 7vw, 5rem) 0; padding-top: 2.5rem; border-top: 1px solid var(--line); }
   .grid .kv { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); }
   section { margin-top: clamp(3rem, 7vw, 5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1.5rem 4rem; padding-top: 2.5rem; border-top: 1px solid var(--line); }

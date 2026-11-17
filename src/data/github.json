@@ -1,26 +1,7 @@
 {
   "user": "kbxai",
-  "fetchedAt": "2026-11-14T10:05:38.858Z",
+  "fetchedAt": "2026-11-17T19:46:49.857Z",
   "repos": [
-    {
-      "name": "LLM-Powered-Code-Deployment-Agent",
-      "description": "FastAPI service that turns a natural-language brief into a static web app with an LLM and deploys it to GitHub Pages (IITM Tools in Data Science project)",
-      "url": "https://github.com/kbxai/LLM-Powered-Code-Deployment-Agent",
-      "homepage": "https://huggingface.co/spaces/24f2007692/llm-code-deployer",
-      "language": "Python",
-      "topics": [
-        "automation",
-        "docker",
-        "fastapi",
-        "github-api",
-        "github-pages",
-        "llm",
-        "pydantic"
-      ],
-      "stars": 2,
-      "updatedAt": "2026-11-08T17:05:31Z",
-      "featured": true
-    },
     {
       "name": "Messy-Mashup-Genre-Classification",
       "description": "Noisy audio genre classification: synthetic mashup training data, ResNet-50 and Audio Spectrogram Transformer ensemble with test-time augmentation (Macro F1 0.954, IITM Deep Learning Kaggle competition)",
@@ -37,14 +18,55 @@
         "transfer-learning"
       ],
       "stars": 1,
-      "updatedAt": "2026-11-08T17:05:29Z",
+      "updatedAt": "2026-11-17T09:18:36Z",
+      "featured": true
+    },
+    {
+      "name": "LLM-Powered-Code-Deployment-Agent",
+      "description": "FastAPI service that turns a natural-language brief into a static web app with an LLM and deploys it to GitHub Pages (IITM Tools in Data Science project)",
+      "url": "https://github.com/kbxai/LLM-Powered-Code-Deployment-Agent",
+      "homepage": "https://24f2007692-llm-code-deployer.hf.space/",
+      "language": "Python",
+      "topics": [
+        "automation",
+        "docker",
+        "fastapi",
+        "github-api",
+        "github-pages",
+        "llm",
+        "pydantic"
+      ],
+      "stars": 2,
+      "updatedAt": "2026-11-17T09:18:30Z",
+      "featured": true
+    },
+    {
+      "name": "interview-intelligence-ai",
+      "description": "Full stack AI interview preparation & ATS resume studio platform",
+      "url": "https://github.com/kbxai/interview-intelligence-ai",
+      "homepage": "https://interview-ai-assistance.vercel.app/",
+      "language": "JavaScript",
+      "topics": [
+        "ats",
+        "docker",
+        "express",
+        "gemini",
+        "jwt",
+        "llm",
+        "mongodb",
+        "nodejs",
+        "puppeteer",
+        "react"
+      ],
+      "stars": 0,
+      "updatedAt": "2026-11-17T09:18:24Z",
       "featured": true
     },
     {
       "name": "Comment-Category-Prediction-Challenge",
       "description": "Comment category classification with TF-IDF and a voting ensemble of SGD, bagged Logistic Regression and SVC (Macro F1 0.8295, IITM ML competition)",
       "url": "https://github.com/kbxai/Comment-Category-Prediction-Challenge",
-      "homepage": null,
+      "homepage": "https://kbxai.github.io/projects/comment-category-prediction/",
       "language": "Jupyter Notebook",
       "topics": [
         "ensemble-learning",
@@ -62,7 +84,7 @@
       "name": "MedSyncPro-Hospital-Management-System",
       "description": "Role-based hospital appointment system: Flask API, Vue.js frontend, Celery and Redis scheduled jobs, Docker Compose (IITM MAD-2 project)",
       "url": "https://github.com/kbxai/MedSyncPro-Hospital-Management-System",
-      "homepage": null,
+      "homepage": "https://kbxai.github.io/projects/medsyncpro/",
       "language": "Vue",
       "topics": [
         "celery",
@@ -76,28 +98,6 @@
       ],
       "stars": 1,
       "updatedAt": "2026-11-08T11:42:38Z",
-      "featured": true
-    },
-    {
-      "name": "interview-intelligence-ai",
-      "description": "Full stack AI interview preparation & ATS resume studio platform",
-      "url": "https://github.com/kbxai/interview-intelligence-ai",
-      "homepage": null,
-      "language": "JavaScript",
-      "topics": [
-        "ats",
-        "docker",
-        "express",
-        "gemini",
-        "jwt",
-        "llm",
-        "mongodb",
-        "nodejs",
-        "puppeteer",
-        "react"
-      ],
-      "stars": 0,
-      "updatedAt": "2026-11-08T11:42:29Z",
       "featured": true
     },
     {

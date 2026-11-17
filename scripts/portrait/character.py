@@ -133,6 +133,32 @@ def build_base(primary: Path) -> dict:
     face_w = pts[454, 0] - pts[234, 0]
     yy, xx = np.mgrid[0:shp[0], 0:shp[1]].astype(np.float32)
 
+    # repair the segmentation: it bites into the ears and cracks along the hairline.
+    # Ears: skin-coloured pixels beside the face (the grey wall has almost no chroma), joined to the person.
+    lab0 = cv2.cvtColor(bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
+    skin0 = (lab0[..., 1] >= 137) & (lab0[..., 2] >= 143)
+    side = ((xx > pts[234, 0] - 0.24 * face_w) & (xx < pts[234, 0] + 0.04 * face_w)) |            ((xx < pts[454, 0] + 0.24 * face_w) & (xx > pts[454, 0] - 0.04 * face_w))
+    band = (yy > brow_y - 0.08 * face_w) & (yy < mouth_y + 0.05 * face_w)
+    ear_px = cv2.morphologyEx((skin0 & side & band).astype(np.uint8), cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+    ear_px = cv2.morphologyEx(ear_px, cv2.MORPH_CLOSE, np.ones((21, 21), np.uint8)) > 0
+    n_, lab_e, _, _ = cv2.connectedComponentsWithStats(ear_px.astype(np.uint8), 8)
+    near = cv2.dilate(person.astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
+    ear_px = np.isin(lab_e, [i for i in range(1, n_) if (near & (lab_e == i)).any()])
+    seg_core = cv2.erode(person.astype(np.uint8), np.ones((21, 21), np.uint8)) > 0
+    person = person | ear_px
+    person = cv2.morphologyEx(person.astype(np.uint8), cv2.MORPH_CLOSE, np.ones((25, 25), np.uint8)) > 0
+    # the faded sides of the head above the ears have no chroma and get cut; bridge them only beside the face
+    big = cv2.morphologyEx(person.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (181, 181))) > 0
+    side_band = side & (yy > brow_y - 0.30 * face_w) & (yy < mouth_y)
+    ear_px = ear_px | (big & side_band & ~person)
+    person = person | (big & side_band)
+    fill = person.astype(np.uint8).copy()                 # fill holes: flood the background from a corner
+    ff = np.zeros((shp[0] + 2, shp[1] + 2), np.uint8)
+    for corner in ((0, 0), (shp[1] - 1, 0)):
+        if fill[corner[1], corner[0]] == 0:
+            cv2.floodFill(fill, ff, corner, 2)
+    person = smooth_mask((fill != 2), 2)
+
     # skin reference: cheeks
     cheek = face & (yy > eye_y + 0.05 * face_w) & (yy < nose_y) & ~eye_r & ~eye_l
     skin_med = float(np.median(gray[cheek]))
@@ -184,6 +210,7 @@ def build_base(primary: Path) -> dict:
     shirt = smooth_mask(body & ~neck & ~beard, 3)
     skin = person & ~hair & ~shirt
     halo = (cv2.dilate(hair.astype(np.uint8), np.ones((17, 17), np.uint8)) > 0) &         ~(cv2.dilate(face.astype(np.uint8), np.ones((61, 61), np.uint8)) > 0)
+    halo &= ~seg_core & ~ear_px      # only the light fringe at the outer edge, never the forehead or ears
     skin &= ~halo
     person = person & ~(halo & ~hair)
 

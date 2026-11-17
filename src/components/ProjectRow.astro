@@ -1,5 +1,6 @@
 ---
 import ProjectFigure from './ProjectFigure.astro';
+import ProjectShot from './ProjectShot.astro';
 interface Project {
   slug: string; title: string; context: string; dates: string; stack: string[];
   metric: { label: string; value: string }; summary: string; links: { demo?: string; github: string };
@@ -12,7 +13,7 @@ const n = String(index + 1).padStart(2, '0');
 const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5l7-7M6 4.5h5.5V10" stroke="currentColor" stroke-width="1.4"/></svg>';
 ---
 <article class="row" data-reveal>
-  <div class="fig-col"><ProjectFigure slug={p.slug} results={p.results} /></div>
+  <div class="fig-col">{p.links.demo ? <ProjectShot slug={p.slug} demo={p.links.demo} title={p.title} /> : <ProjectFigure slug={p.slug} results={p.results} />}</div>
   <div class="text">
     <p class="meta"><span class="n">{n}</span><span>{p.context}</span><span class="dim">{p.dates}</span></p>
     <h3><a href={`/projects/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a></h3>
@@ -31,6 +32,7 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
 
 <style>
   .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.75rem, 5vw, 5rem); padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--line); align-items: stretch; }
+  .fig-col { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
   .text { display: flex; flex-direction: column; gap: 1rem; justify-content: center; }
   .meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; font-size: 0.86rem; color: var(--muted); }
   .n { font-family: var(--mono); color: var(--amber); font-size: 0.8rem; padding-top: 0.15em; }
@@ -46,7 +48,7 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
   .actions { margin-top: 0.4rem; font-size: 0.94rem; }
   .row:hover :global(.fig) { border-color: var(--line-2); }
   @media (max-width: 860px) {
-    .row { grid-template-columns: 1fr; }
+    .row { grid-template-columns: minmax(0, 1fr); }
     .fig-col { order: 2; }
   }
 </style>

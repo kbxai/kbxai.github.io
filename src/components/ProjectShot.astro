@@ -1,0 +1,35 @@
+---
+// A real screenshot of a live demo in a minimal browser frame (the address shows where it really runs).
+// Screenshots: public/work/<slug>-{720,1280}.webp, captured from the live apps on 17 Nov 2026.
+interface Props { slug: string; demo: string; title: string; eager?: boolean }
+const { slug, demo, title, eager = false } = Astro.props;
+const host = new URL(demo).host + new URL(demo).pathname.replace(/\/$/, '');
+const ALT: Record<string, string> = {
+  'interview-intelligence-ai': 'The Interview Intelligence landing page: headline, Try it free button and an example report.',
+  'messy-mashup': 'The music genre classifier on Hugging Face after classifying an example clip as jazz, with its spectrogram.',
+  'llm-code-deployment-agent': 'The LLM Code Deployer page explaining how a brief becomes a live website.',
+};
+---
+<figure class="shot">
+  <div class="bar" aria-hidden="true"><span class="dot"></span><span class="addr">{host}</span></div>
+  <a href={demo} tabindex="-1" aria-hidden="true">
+    <img
+      src={`/work/${slug}-1280.webp`}
+      srcset={`/work/${slug}-720.webp 720w, /work/${slug}-1280.webp 1280w`}
+      sizes="(max-width: 860px) 92vw, 46vw"
+      width="1280" height="800"
+      alt={ALT[slug] ?? `Screenshot of ${title}`}
+      loading={eager ? 'eager' : 'lazy'} decoding="async"
+    />
+  </a>
+</figure>
+
+<style>
+  .shot { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--ink-2); transition: border-color var(--t-base) var(--ease); }
+  .shot:hover { border-color: var(--line-2); }
+  .bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--line); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px rgba(246, 163, 71, 0.5); flex: none; }
+  .addr { font-family: var(--mono); font-size: 0.72rem; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  a { display: block; }
+  img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+</style>

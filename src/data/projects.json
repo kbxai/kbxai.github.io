@@ -29,7 +29,7 @@
       "Tests are limited to two backend smoke tests."
     ],
     "links": {
-      "demo": "https://interview-ai-assistance.vercel.app/app",
+      "demo": "https://interview-ai-assistance.vercel.app/",
       "github": "https://github.com/kbxai/interview-intelligence-ai"
     }
   },

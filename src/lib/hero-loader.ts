@@ -70,7 +70,7 @@ export function maybeStartHero(hostId = 'hero-art'): void {
     }
     starting = true;
     try {
-      const { startField } = await import('../three/field');
+      const { startField } = await import('../three/grid');
       stop = await startField(host, { tier, onStats: (frameMs, state) => emit({ frameMs, state }) });
       emit({ tier: `WebGL2 ${tier}` });
     } catch (err) {
