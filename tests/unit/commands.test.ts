@@ -32,8 +32,21 @@ describe('terminal commands', () => {
     expect(run('cat nope', ctx()).lines[0]?.kind).toBe('error');
   });
   it('open returns an open action', () => {
-    expect(run('open resume', ctx()).action).toEqual({ type: 'open', href: '/resume/' });
-    expect(run('open llm-code', ctx()).action).toEqual({ type: 'open', href: '/projects/llm-code-deployment-agent/' });
+    expect(run('open resume', ctx()).action).toEqual({ type: 'open', href: '/resume/', newTab: false });
+    expect(run('open llm-code', ctx()).action).toEqual({ type: 'open', href: '/projects/llm-code-deployment-agent/', newTab: false });
+  });
+  it('open understands numbers, cd, projects and demo/source', () => {
+    const c = ctx();
+    expect(run('open 2', c).action).toEqual({ type: 'open', href: `/projects/${c.projects[1]!.slug}/`, newTab: false });
+    expect(run('cd messy', c).action).toMatchObject({ href: '/projects/messy-mashup/' });
+    expect(run('open project messy', c).action).toMatchObject({ href: '/projects/messy-mashup/' });
+    expect(run('open projects', c).action).toMatchObject({ href: '/#work' });
+    expect(run('cd ..', c).action).toMatchObject({ href: '/' });
+    const demo = c.projects.find((p) => p.links.demo)!;
+    expect(run(`demo ${demo.slug}`, c).action).toEqual({ type: 'open', href: demo.links.demo, newTab: true });
+    expect(run(`open demo ${demo.slug}`, c).action).toMatchObject({ href: demo.links.demo });
+    expect(run(`open ${demo.slug} --source`, c).action).toMatchObject({ href: demo.links.github, newTab: true });
+    expect(run('open nothing-here', c).lines[0]!.kind).toBe('error');
   });
   it('ask validates length and returns an ask action', () => {
     expect(run('ask', ctx()).action).toBeUndefined();

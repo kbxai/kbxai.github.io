@@ -84,6 +84,8 @@ export function initTerminal(): void {
   document.querySelectorAll<HTMLElement>('[data-term-ui]').forEach((el) => (el.hidden = false));
   let cursor = -1;
   let booted = false;
+  let booting: Promise<void> = Promise.resolve();
+  let hurry = false;
 
   // the conversation follows the visitor from page to page (this tab only)
   const save = () => {
@@ -116,7 +118,7 @@ export function initTerminal(): void {
     if (!booted) {
       booted = true;
       if (restore()) log.scrollTop = log.scrollHeight;
-      else void boot();
+      else booting = boot();
     }
     requestAnimationFrame(() => input.focus());
   };
@@ -145,7 +147,7 @@ export function initTerminal(): void {
     lines.push({ text: "Type 'help' to see commands, or try: ls projects, cat messy-mashup, ask what is your best project?", kind: 'plain' });
     for (const l of lines) {
       print([l]);
-      if (first && motionAllowed()) await wait(220);
+      if (first && motionAllowed() && !hurry) await wait(220);
     }
     save();
   };
@@ -167,6 +169,9 @@ export function initTerminal(): void {
     e.preventDefault();
     const value = input.value;
     input.value = '';
+    // a command typed while the boot lines print: finish them at once, then answer below them
+    hurry = true;
+    await booting;
     cursor = -1;
     print([{ text: `visitor@kbxai:~$ ${value}`, kind: 'muted' }]);
     if (value.trim()) ctx.history.push(value.trim());
@@ -179,8 +184,16 @@ export function initTerminal(): void {
       log.replaceChildren();
       save();
     } else if (a.type === 'open') {
-      close();
-      window.location.href = a.href;
+      if (a.newTab) {
+        // within the Enter key's user activation window, so this is not treated as a popup
+        // ('noopener' would make window.open return null even on success, so cut the opener by hand)
+        const w = window.open(a.href, '_blank');
+        if (w) w.opener = null;
+        else window.location.href = a.href;
+      } else {
+        close();
+        window.location.href = a.href;
+      }
     }
     else if (a.type === 'glow') setGlow(a.on);
     else if (a.type === 'motion') setPaused(a.paused);

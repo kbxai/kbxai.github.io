@@ -4,7 +4,7 @@ export type Kind = 'muted' | 'accent' | 'amber' | 'error' | 'plain';
 export interface Line { text: string; href?: string; kind?: Kind }
 export type Action =
   | { type: 'clear' }
-  | { type: 'open'; href: string }
+  | { type: 'open'; href: string; newTab?: boolean }
   | { type: 'glow'; on: boolean }
   | { type: 'motion'; paused: boolean }
   | { type: 'ask'; question: string }
@@ -32,7 +32,8 @@ export const COMMANDS: { name: string; usage: string; about: string }[] = [
   { name: 'whoami', usage: 'whoami [--face]', about: 'who I am (--face prints my ASCII portrait)' },
   { name: 'ls', usage: 'ls [projects|lab]', about: 'list projects or lab pages' },
   { name: 'cat', usage: 'cat <project|skills|education>', about: 'print details' },
-  { name: 'open', usage: 'open <project|resume|github|linkedin|lab>', about: 'open a page' },
+  { name: 'open', usage: 'open <project|number|projects|resume|lab|github|linkedin>', about: 'open a page (cd works too)' },
+  { name: 'demo', usage: 'demo <project>', about: 'open a live demo (also: open demo <project>, open <project> --source)' },
   { name: 'ask', usage: 'ask <question>', about: 'ask an AI grounded only on this site' },
   { name: 'contact', usage: 'contact', about: 'email, phone, links' },
   { name: 'theme', usage: 'theme [glow|plain]', about: 'toggle the glow and scanlines' },
@@ -51,6 +52,7 @@ export function tokenize(input: string): string[] {
 export function findProject(ctx: Ctx, query: string): ProjectLite | undefined {
   const q = query.toLowerCase().replace(/[^a-z0-9]/g, '');
   if (!q) return undefined;
+  if (/^0*[1-9]$/.test(q)) return ctx.projects[Number(q) - 1]; // "open 2" = second project, as numbered on the site
   return (
     ctx.projects.find((p) => p.slug.replace(/[^a-z0-9]/g, '') === q) ??
     ctx.projects.find((p) => p.slug.replace(/[^a-z0-9]/g, '').startsWith(q)) ??
@@ -113,15 +115,39 @@ export function run(input: string, ctx: Ctx): Result {
       const p = findProject(ctx, arg);
       return p ? { lines: projectLines(p) } : { lines: [L(`cat: ${arg}: no such project (try 'ls projects')`, 'error')] };
     }
-    case 'open': {
-      const a = arg.toLowerCase();
+    case 'open':
+    case 'cd':
+    case 'demo': {
+      const NOISE = new Set(['project', 'projects', 'the', 'page', 'my', 'to', 'demo', '--demo', 'live', 'source', '--source', 'code', 'repo', 'github']);
+      const words = args.map((w) => w.toLowerCase());
+      const wantDemo = cmd === 'demo' || words.some((w) => ['demo', '--demo', 'live'].includes(w));
+      const wantSource = words.some((w) => ['source', '--source', 'code', 'repo'].includes(w)) || (words.includes('github') && words.length > 1);
+      const rest = words.filter((w) => !NOISE.has(w)).join(' ');
+      const go = (href: string, label = href): Result => ({
+        lines: [L(`opening ${label}`, 'muted')],
+        action: { type: 'open', href, newTab: /^(https?:|mailto:)/.test(href) },
+      });
+      if (!rest) {
+        if (words.some((w) => w.startsWith('project'))) return go('/#work', 'the project list');
+        if (words.length === 1 && words[0] === 'github') return go(ctx.profile.links.github);
+        if (cmd === 'cd' || !words.length) {
+          if (cmd === 'cd') return go('/', 'home');
+          return { lines: [L('open what? try: open 2, open messy-mashup, open demo interview, open resume, open projects', 'error')] };
+        }
+      }
       const fixed: Record<string, string> = {
-        resume: '/resume/', cv: '/resume/', github: ctx.profile.links.github, linkedin: ctx.profile.links.linkedin, lab: '/lab/spectrogram/',
+        resume: '/resume/', cv: '/resume/', lab: '/lab/spectrogram/', spectrogram: '/lab/spectrogram/', home: '/', '~': '/', '/': '/', '..': '/',
+        work: '/#work', contact: '/#contact', linkedin: ctx.profile.links.linkedin, email: `mailto:${ctx.profile.email}`, mail: `mailto:${ctx.profile.email}`,
       };
-      if (fixed[a]) return { lines: [L(`opening ${fixed[a]}`, 'muted')], action: { type: 'open', href: fixed[a] } };
-      const p = findProject(ctx, arg);
-      if (p) return { lines: [L(`opening /projects/${p.slug}/`, 'muted')], action: { type: 'open', href: `/projects/${p.slug}/` } };
-      return { lines: [L(`open: ${arg || '(nothing)'}: not found`, 'error')] };
+      if (fixed[rest]) return go(fixed[rest]);
+      const p = findProject(ctx, rest);
+      if (!p) return { lines: [L(`${cmd}: ${args.join(' ')}: not found`, 'error'), L('try: open 2, open messy-mashup, open demo interview, open resume, open projects', 'muted')] };
+      if (wantSource) return go(p.links.github);
+      if (wantDemo) {
+        if (p.links.demo) return go(p.links.demo, `the live demo of ${p.title}`);
+        return { lines: [L(`${p.title} has no live demo; opening its page instead`, 'muted')], action: { type: 'open', href: `/projects/${p.slug}/` } };
+      }
+      return go(`/projects/${p.slug}/`);
     }
     case 'contact':
       return {
