@@ -4,7 +4,7 @@ import { run, complete, type Ctx, type Line } from './commands';
 import { localAnswer, type KnowledgeProject } from './answer';
 import { motionAllowed, setGlow, setPaused } from '../../lib/motion';
 
-export const ASK_ENDPOINT = 'https://24f2007692-ask-kartik.hf.space/ask';
+export const ASK_ENDPOINT = 'https://ask-kartik-kbwebdesigner1s-projects.vercel.app/ask';
 const GLYPHS = '.:-=+*#%@01<>/\\|';
 
 const ctx: Ctx & { projects: KnowledgeProject[] } = { profile, projects, history: [] };
