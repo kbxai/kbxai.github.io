@@ -10,7 +10,7 @@ import { scrollProgress } from './field-core';
 interface Options { tier: 'high' | 'low'; onStats?: (frameMs: number, state?: string) => void }
 
 const CELL_ASPECT = 1.6;
-const INTRO_MS = 2600;
+const INTRO_MS = 1600; // one light sweep across the face; starts and ends at the still's resting light
 
 const VERT = `#version 300 es
 in vec2 aPos;
@@ -156,6 +156,9 @@ export async function startField(host: HTMLElement, opts: Options): Promise<() =
   gl.attachShader(prog, compile(gl, gl.VERTEX_SHADER, VERT));
   gl.attachShader(prog, compile(gl, gl.FRAGMENT_SHADER, FRAG));
   gl.linkProgram(prog);
+  // let the driver compile off the main thread where it can, instead of stalling the first frame for ~100 ms
+  const par = gl.getExtension('KHR_parallel_shader_compile');
+  if (par) while (!gl.getProgramParameter(prog, par.COMPLETION_STATUS_KHR)) await new Promise((r) => requestAnimationFrame(r));
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(`link: ${gl.getProgramInfoLog(prog)}`);
   gl.useProgram(prog);
   const U = (n: string) => gl.getUniformLocation(prog, n);

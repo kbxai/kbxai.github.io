@@ -2,7 +2,7 @@ import profile from '../../data/profile.json';
 import projects from '../../data/projects.json';
 import { run, complete, type Ctx, type Line } from './commands';
 import { localAnswer, type KnowledgeProject } from './answer';
-import { motionAllowed, setGlow, setPaused } from '../../lib/motion';
+import { motionAllowed, setPaused } from '../../lib/motion';
 
 export const ASK_ENDPOINT = 'https://ask-kartik-kbwebdesigner1s-projects.vercel.app/ask';
 const GLYPHS = '.:-=+*#%@01<>/\\|';
@@ -84,8 +84,6 @@ export function initTerminal(): void {
   document.querySelectorAll<HTMLElement>('[data-term-ui]').forEach((el) => (el.hidden = false));
   let cursor = -1;
   let booted = false;
-  let booting: Promise<void> = Promise.resolve();
-  let hurry = false;
 
   // the conversation follows the visitor from page to page (this tab only)
   const save = () => {
@@ -118,7 +116,7 @@ export function initTerminal(): void {
     if (!booted) {
       booted = true;
       if (restore()) log.scrollTop = log.scrollHeight;
-      else booting = boot();
+      else boot();
     }
     requestAnimationFrame(() => input.focus());
   };
@@ -129,26 +127,8 @@ export function initTerminal(): void {
     form.requestSubmit();
   };
 
-  const boot = async () => {
-    let first = true;
-    try {
-      first = !sessionStorage.getItem('kb.booted');
-      sessionStorage.setItem('kb.booted', '1');
-    } catch {
-      /* ignore */
-    }
-    const lines: Line[] = first
-      ? [
-          { text: 'kbxai-os v2026.11 (tty1)', kind: 'muted' },
-          { text: '[ ok ] mounted /projects (5 entries, facts checked against resume)', kind: 'muted' },
-          { text: '[ ok ] ascii renderer ready (WebGL2, static fallback)', kind: 'muted' },
-        ]
-      : [];
-    lines.push({ text: "Type 'help' to see commands, or try: ls projects, cat messy-mashup, ask what is your best project?", kind: 'plain' });
-    for (const l of lines) {
-      print([l]);
-      if (first && motionAllowed() && !hurry) await wait(220);
-    }
+  const boot = () => {
+    print([{ text: "Type 'help' for commands, or ask a question: ask what is your best project?", kind: 'plain' }]);
     save();
   };
 
@@ -169,9 +149,6 @@ export function initTerminal(): void {
     e.preventDefault();
     const value = input.value;
     input.value = '';
-    // a command typed while the boot lines print: finish them at once, then answer below them
-    hurry = true;
-    await booting;
     cursor = -1;
     print([{ text: `visitor@kbxai:~$ ${value}`, kind: 'muted' }]);
     if (value.trim()) ctx.history.push(value.trim());
@@ -195,7 +172,6 @@ export function initTerminal(): void {
         window.location.href = a.href;
       }
     }
-    else if (a.type === 'glow') setGlow(a.on);
     else if (a.type === 'motion') setPaused(a.paused);
     else if (a.type === 'ask') await handleAsk(a.question);
     else if (a.type === 'face') {

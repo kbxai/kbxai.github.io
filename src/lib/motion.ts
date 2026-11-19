@@ -27,30 +27,20 @@ export function setPaused(paused: boolean): void {
   syncButton();
 }
 
+// The header button is named "Motion" and reads "Motion on" / "Motion off"; aria-pressed = motion on. Its space is reserved but it stays invisible until JS runs (no layout shift; without JS nothing moves).
 function syncButton(): void {
   const btn = document.getElementById('motion-toggle');
   if (!btn) return;
   const paused = isPaused();
-  btn.setAttribute('aria-pressed', String(paused));
-  const label = btn.querySelector('.txt');
-  if (label) label.textContent = paused ? 'Motion off' : 'Motion on';
+  btn.setAttribute('aria-pressed', String(!paused));
+  const state = btn.querySelector('.state');
+  if (state) state.textContent = paused ? 'off' : 'on';
 }
 
 export function initMotionToggle(): void {
   const btn = document.getElementById('motion-toggle');
   if (!btn) return;
-  btn.style.visibility = 'visible';
+  btn.removeAttribute('data-pending');
   syncButton();
   btn.addEventListener('click', () => setPaused(!isPaused()));
-}
-
-export function setGlow(on: boolean): void {
-  if (on) delete root.dataset.glow;
-  else root.dataset.glow = 'off';
-  try {
-    if (on) localStorage.removeItem('kb.glow');
-    else localStorage.setItem('kb.glow', 'off');
-  } catch {
-    /* ignore */
-  }
 }

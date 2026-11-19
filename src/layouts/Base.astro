@@ -1,8 +1,7 @@
 ---
 import '@fontsource/newsreader/latin-400.css';
-import '@fontsource/newsreader/latin-400-italic.css';
-import '@fontsource/geist-sans/latin-400.css';
-import '@fontsource/geist-sans/latin-500.css';
+import '@fontsource/atkinson-hyperlegible-next/latin-400.css';
+import '@fontsource/atkinson-hyperlegible-next/latin-600.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
 import '@fontsource/jetbrains-mono/latin-700.css'; // the hero's glyph atlas is drawn at 700 (src/three/grid.ts); fetched only when it is used
 import '../styles/global.css';
@@ -10,8 +9,7 @@ import profile from '../data/profile.json';
 import Hud from '../components/Hud.astro';
 import Terminal from '../components/Terminal.astro';
 import serif400 from '@fontsource/newsreader/files/newsreader-latin-400-normal.woff2?url';
-import serifItalic from '@fontsource/newsreader/files/newsreader-latin-400-italic.woff2?url';
-import sans400 from '@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2?url';
+import sans400 from '@fontsource/atkinson-hyperlegible-next/files/atkinson-hyperlegible-next-latin-400-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -39,7 +37,6 @@ const nav = [
   { href: '/resume/', label: 'Resume', match: '/resume' },
   { href: '/#contact', label: 'Contact', match: '' },
 ];
-const [first, ...rest] = profile.name.split(' ');
 ---
 <!doctype html>
 <html lang="en">
@@ -52,7 +49,6 @@ const [first, ...rest] = profile.name.split(' ');
     <meta name="theme-color" content="#0b0a12" />
     <meta name="color-scheme" content="dark" />
     <link rel="preload" href={serif400} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={serifItalic} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sans400} as="font" type="font/woff2" crossorigin />
     {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -83,14 +79,16 @@ const [first, ...rest] = profile.name.split(' ');
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <div class="progress" aria-hidden="true"></div>
     <header class="top" id="top">
       <div class="wrap">
-        <a class="brand" href="/">{first} <em>{rest.join(' ')}</em></a>
+        <a class="brand" href="/">{profile.name}</a>
         <nav aria-label="Main">
           {nav.map((n) => (
             <a class={n.cls} href={n.href} aria-current={n.match && path === n.match ? 'page' : undefined}>{n.label}</a>
           ))}
+          <button class="motion-toggle" type="button" id="motion-toggle" aria-label="Motion" aria-pressed="true" data-pending>
+            <span>Motion</span><span class="state">on</span>
+          </button>
         </nav>
       </div>
     </header>
@@ -108,9 +106,6 @@ const [first, ...rest] = profile.name.split(' ');
         <Hud />
       </div>
     </footer>
-    <button class="motion-pill" type="button" id="motion-toggle" aria-pressed="false" style="visibility:hidden">
-      <span class="dot" aria-hidden="true"></span><span class="txt">Motion on</span>
-    </button>
     <script>
       import { initMotionToggle } from '../lib/motion';
       import { initReveal } from '../lib/reveal';
@@ -120,8 +115,6 @@ const [first, ...rest] = profile.name.split(' ');
       const onScroll = () => top?.classList.toggle('scrolled', window.scrollY > 24);
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
-      const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 200));
-      idle(() => import('../lib/smooth').then((m) => m.initSmooth()));
     </script>
   </body>
 </html>

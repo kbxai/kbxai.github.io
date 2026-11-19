@@ -14,7 +14,7 @@ describe('terminal commands', () => {
   });
   it('help lists every command', () => {
     const out = text(run('help', ctx()));
-    for (const c of ['whoami', 'ls', 'cat', 'open', 'ask', 'contact', 'theme', 'motion', 'clear']) expect(out).toContain(c);
+    for (const c of ['whoami', 'ls', 'cat', 'open', 'ask', 'contact', 'motion', 'clear']) expect(out).toContain(c);
   });
   it('whoami shows the real CGPA, never the stale one', () => {
     const out = text(run('whoami', ctx()));
@@ -53,9 +53,7 @@ describe('terminal commands', () => {
     expect(run(`ask ${'x'.repeat(301)}`, ctx()).lines[0]?.kind).toBe('error');
     expect(run('ask what is your cgpa', ctx()).action).toEqual({ type: 'ask', question: 'what is your cgpa' });
   });
-  it('theme and motion toggles', () => {
-    expect(run('theme plain', ctx()).action).toEqual({ type: 'glow', on: false });
-    expect(run('theme glow', ctx()).action).toEqual({ type: 'glow', on: true });
+  it('motion toggle', () => {
     expect(run('motion pause', ctx()).action).toEqual({ type: 'motion', paused: true });
     expect(run('motion resume', ctx()).action).toEqual({ type: 'motion', paused: false });
   });

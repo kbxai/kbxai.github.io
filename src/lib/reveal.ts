@@ -1,4 +1,4 @@
-// Scroll reveals: elements with [data-reveal] come into focus (blur + rise) once, the first time they enter view.
+// Scroll reveals: section headings with [data-reveal] fade in once, the first time they enter view.
 // Content is fully visible without JS: the hidden start state only applies under html.reveal-on, which this sets.
 import { motionAllowed } from './motion';
 

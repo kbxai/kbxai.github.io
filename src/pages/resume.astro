@@ -54,20 +54,20 @@ const hasPdf = existsSync(new URL('../../public/resume.pdf', import.meta.url));
 <style>
   .cv { padding-top: calc(68px + clamp(2rem, 6vw, 4rem)); max-width: 1080px; }
   .cv-head { margin-bottom: clamp(2.5rem, 6vw, 4rem); display: grid; gap: 0.7rem; }
-  h1 { font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -0.04em; }
-  .hl { font-size: 1.2rem; }
+  h1 { font-size: var(--fs-2xl); letter-spacing: -0.04em; }
+  .hl { font-size: var(--fs-lg); }
   .contact { color: var(--muted); }
   .contact span { color: var(--dim); margin: 0 0.25rem; }
   .actions { margin-top: 1rem; }
   .actions button { background: none; cursor: pointer; font: inherit; }
   section { display: grid; grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); gap: 1rem 3rem; padding: 2.5rem 0; border-top: 1px solid var(--line); }
-  section h2 { font-size: 1.9rem; }
+  section h2 { font-size: var(--fs-xl); }
   .item { margin-bottom: 1.8rem; }
-  .item h3 { font-size: 1.45rem; margin-bottom: 0.25rem; }
+  .item h3 { font-size: var(--fs-lg); margin-bottom: 0.25rem; }
   .item h3 a { text-decoration: none; }
   .item ul { margin: 0.6rem 0 0; padding-left: 1.2rem; display: grid; gap: 0.45rem; }
   .item li::marker { color: var(--amber); }
-  .small { font-size: 0.92rem; }
+  .small { font-size: var(--fs-sm); }
   @media (max-width: 760px) { section { grid-template-columns: 1fr; } }
   @media print {
     :global(body) { background: #fff !important; color: #000 !important; font-size: 11pt; }

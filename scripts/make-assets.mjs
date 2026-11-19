@@ -1,5 +1,5 @@
 // Generates static assets: favicon (KB monogram, our own geometry) and the OG image (portrait still + name).
-// The still comes from scripts/portrait/micro.py --publish -> public/field/still.webp.
+// The still comes from scripts/portrait/capture_still.py (the live portrait at rest) -> public/field/still.webp.
 import { readFile, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 
@@ -27,7 +27,7 @@ const text = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <rect width="1200" height="630" fill="url(#f)"/>
   <g font-family="Georgia, 'Times New Roman', serif" fill="#efe9df">
     <text x="64" y="250" font-size="104" letter-spacing="-3">Kartik</text>
-    <text x="124" y="352" font-size="104" font-style="italic" letter-spacing="-3">Bajaj</text>
+    <text x="124" y="352" font-size="104" letter-spacing="-3">Bajaj</text>
   </g>
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
     <text x="66" y="430" font-size="27" fill="#a8a2b0">AI/LLM Engineer internship, IIT Madras</text>

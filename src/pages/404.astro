@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 ---
 <Base title="Page not found | Kartik Bajaj" description="This page does not exist.">
   <section class="wrap nf" aria-labelledby="nf">
-    <p class="code mono" aria-hidden="true">404</p>
+    <p class="code" aria-hidden="true">404</p>
     <h1 id="nf">This page does not exist.</h1>
     <p class="muted">The link may be old, or the address has a typo. These pages do exist:</p>
     <ul>
@@ -16,7 +16,7 @@ import Base from '../layouts/Base.astro';
 </Base>
 <style>
   .nf { padding-top: calc(68px + clamp(3rem, 10vw, 7rem)); min-height: 70vh; }
-  .code { color: var(--amber); font-size: 0.9rem; margin-bottom: 1.2rem; }
-  h1 { font-size: clamp(2.6rem, 7vw, 5.5rem); letter-spacing: -0.035em; margin-bottom: 1.2rem; max-width: 14ch; }
+  .code { color: var(--amber); font-family: var(--mono); font-size: var(--fs-sm); margin-bottom: 1.2rem; }
+  h1 { font-size: var(--fs-2xl); letter-spacing: -0.035em; margin-bottom: 1.2rem; max-width: 14ch; }
   ul { list-style: none; padding: 0; margin: 2rem 0 0; display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
 </style>

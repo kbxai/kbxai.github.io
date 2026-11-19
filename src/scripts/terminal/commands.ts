@@ -5,7 +5,6 @@ export interface Line { text: string; href?: string; kind?: Kind }
 export type Action =
   | { type: 'clear' }
   | { type: 'open'; href: string; newTab?: boolean }
-  | { type: 'glow'; on: boolean }
   | { type: 'motion'; paused: boolean }
   | { type: 'ask'; question: string }
   | { type: 'experimental'; name: string }
@@ -36,7 +35,6 @@ export const COMMANDS: { name: string; usage: string; about: string }[] = [
   { name: 'demo', usage: 'demo <project>', about: 'open a live demo (also: open demo <project>, open <project> --source)' },
   { name: 'ask', usage: 'ask <question>', about: 'ask an AI grounded only on this site' },
   { name: 'contact', usage: 'contact', about: 'email, phone, links' },
-  { name: 'theme', usage: 'theme [glow|plain]', about: 'toggle the glow and scanlines' },
   { name: 'motion', usage: 'motion [pause|resume]', about: 'pause or resume all animation' },
   { name: 'history', usage: 'history', about: 'commands you typed' },
   { name: 'clear', usage: 'clear', about: 'clear the screen' },
@@ -103,7 +101,7 @@ export function run(input: string, ctx: Ctx): Result {
       };
     case 'ls': {
       const what = (args[0] ?? 'projects').toLowerCase();
-      if (what === 'lab') return { lines: [L('spectrogram/  live audio -> glowing log-mel waterfall', 'plain', '/lab/spectrogram/')] };
+      if (what === 'lab') return { lines: [L('spectrogram/  live audio -> log-mel waterfall', 'plain', '/lab/spectrogram/')] };
       if (what !== 'projects' && what !== '.' && what !== './projects') return { lines: [L(`ls: cannot access '${args[0]}': try 'ls projects' or 'ls lab'`, 'error')] };
       return { lines: ctx.projects.map((p) => L(`${p.slug.padEnd(30)} ${p.metric.label === 'live' ? '[live]' : `${p.metric.label} ${p.metric.value}`}`, 'plain', `/projects/${p.slug}/`)) };
     }
@@ -163,10 +161,6 @@ export function run(input: string, ctx: Ctx): Result {
       if (!arg) return { lines: [L('usage: ask <question>   e.g. ask what did you build with Gemini?', 'muted')] };
       if (arg.length > 300) return { lines: [L('ask: question too long (max 300 characters)', 'error')] };
       return { lines: [], action: { type: 'ask', question: arg } };
-    case 'theme': {
-      const on = !['plain', 'off', 'noglow'].includes((args[0] ?? '').toLowerCase());
-      return { lines: [L(on ? 'glow on' : 'glow off (plain text, no scanlines)', 'muted')], action: { type: 'glow', on } };
-    }
     case 'motion': {
       const paused = !['resume', 'on', 'play'].includes((args[0] ?? 'pause').toLowerCase());
       return { lines: [L(paused ? 'motion paused' : 'motion resumed', 'muted')], action: { type: 'motion', paused } };

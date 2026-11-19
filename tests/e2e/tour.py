@@ -20,7 +20,7 @@ def main() -> None:
             page.on("console", lambda m: errors.append(f"{tag}: {m.text}") if m.type == "error" else None)
             page.on("pageerror", lambda e: errors.append(f"{tag}: {e}"))
             page.goto(BASE + "/", wait_until="load")
-            page.wait_for_timeout(5500)  # hero starts after load + idle, intro 2.4 s
+            page.wait_for_timeout(5500)  # hero starts after load + idle, intro 1.6 s
             page.screenshot(path=str(OUT / f"{tag}-00-hero.png"))
             total = page.evaluate("document.documentElement.scrollHeight")
             y, i = 0, 1

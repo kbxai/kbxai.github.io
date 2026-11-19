@@ -53,24 +53,22 @@ const stage = (m: string) => (/final leaderboard/.test(m) ? 'leaderboard' : /val
 </figure>
 
 <style>
-  .fig { margin: 0; height: 100%; min-height: 260px; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(160deg, var(--ink-3), var(--ink-2) 60%); display: flex; flex-direction: column; gap: 1.2rem; position: relative; overflow: hidden; }
-  .fig::after { content: ''; position: absolute; inset: auto -20% -60% auto; width: 70%; aspect-ratio: 1; background: radial-gradient(closest-side, rgba(246, 163, 71, 0.10), transparent); pointer-events: none; }
-  figcaption { font-family: var(--mono); font-size: 0.74rem; color: var(--dim); }
+  .fig { margin: 0; height: 100%; min-height: 260px; padding: clamp(1.25rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 14px; background: var(--ink-2); display: flex; flex-direction: column; gap: 1.2rem; }
+  figcaption { font-size: var(--fs-sm); color: var(--dim); }
   .bars { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 0.95rem; }
   .bars li { display: grid; grid-template-columns: 1fr auto; gap: 0.35rem 1rem; align-items: baseline; }
-  .m { font-size: 0.9rem; color: var(--muted); }
-  .st { color: var(--dim); font-family: var(--mono); font-size: 0.7rem; }
-  .s { font-family: var(--serif); font-size: 1.35rem; color: var(--paper); line-height: 1; }
+  .m { font-size: var(--fs-sm); color: var(--muted); }
+  .st { color: var(--dim); font-size: var(--fs-xs); }
+  .s { font-family: var(--serif); font-size: var(--fs-lg); color: var(--paper); line-height: 1; }
   .bar { grid-column: 1 / -1; height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; }
-  .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--dim); border-radius: inherit; transform-origin: left; transition: transform 1.1s var(--ease-emph) 0.15s; }
+  .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--dim); border-radius: inherit; }
   .best .s { color: var(--amber); }
   .best .m { color: var(--paper); }
-  .best .bar span { background: var(--amber); box-shadow: 0 0 12px rgba(246, 163, 71, 0.5); }
-  :global(.reveal-on) [data-reveal]:not(.is-in) .bar span { transform: scaleX(0); }
+  .best .bar span { background: var(--amber); }
   .steps { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
-  .steps li { position: relative; padding: 0.7rem 0 0.7rem 2.1rem; color: var(--paper); font-size: 0.98rem; border-left: 1px solid var(--line-2); margin-left: 0.45rem; }
+  .steps li { position: relative; padding: 0.7rem 0 0.7rem 2.1rem; color: var(--paper); font-size: var(--fs-sm); border-left: 1px solid var(--line-2); margin-left: 0.45rem; }
   .steps li::before { content: ''; position: absolute; left: -5px; top: 1.05rem; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); border: 1px solid var(--amber); }
   .steps li:last-child { border-left-color: transparent; }
-  .steps li:last-child::before { background: var(--amber); box-shadow: 0 0 10px rgba(246, 163, 71, 0.6); }
-  .note { font-size: 0.84rem; color: var(--dim); }
+  .steps li:last-child::before { background: var(--amber); }
+  .note { font-size: var(--fs-xs); color: var(--dim); }
 </style>
