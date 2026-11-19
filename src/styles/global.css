@@ -73,7 +73,7 @@ code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--accent); }
 
 /* Header */
 .top { position: fixed; inset: 0 0 auto 0; z-index: 40; border-bottom: 1px solid transparent; transition: background-color var(--t-base) var(--ease), border-color var(--t-base) var(--ease); }
-.top.scrolled { background: rgba(5, 6, 6, 0.94); border-bottom-color: var(--line); }
+.top.scrolled { background: var(--ink); border-bottom-color: var(--line); }
 .top .wrap { display: flex; align-items: center; gap: 0.5rem 2rem; height: 68px; }
 .brand { display: inline-flex; align-items: baseline; font-size: var(--fs-lg); line-height: 1; text-decoration: none; margin-right: auto; white-space: nowrap; color: var(--paper); }
 /* the KBxAI wordmark from the logo: KBx in white mono, AI in the accent */

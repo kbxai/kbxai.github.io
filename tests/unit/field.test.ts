@@ -8,14 +8,21 @@ import projects from '../../src/data/projects.json';
 
 const maps = readFileSync('public/field/maps.webp');
 
-describe('portrait maps (grid-locked hero)', () => {
+describe('portrait maps (shape-matched hero)', () => {
   it('is a small WebP and the metadata names its grid', () => {
     expect(maps.subarray(0, 4).toString('ascii')).toBe('RIFF');
     expect(maps.subarray(8, 12).toString('ascii')).toBe('WEBP');
     expect(maps.byteLength).toBeLessThan(60 * 1024);
-    expect(meta.maps).toEqual([meta.cols, meta.rows]);
+    expect(meta.maps).toHaveLength(2);
+    expect(meta.maps.every((n) => Number.isInteger(n) && n > 0)).toBe(true);
   });
-  it('glyph ramp has 16 or fewer glyphs and no spaces', () => {
+  it('has a six-value shape vector for every printable character, space first', () => {
+    expect(meta.chars).toHaveLength(95);
+    expect(meta.chars[0]).toBe(' ');
+    expect(meta.glyphs).toHaveLength(95 * 6);
+    expect(meta.glyphs.every((v) => v >= 0 && v <= 255)).toBe(true);
+  });
+  it('3D project figures keep a 16-glyph brightness ramp with no spaces', () => {
     expect(meta.ramp.length).toBeLessThanOrEqual(16);
     expect(meta.ramp).not.toContain(' ');
   });
@@ -32,12 +39,12 @@ describe('whoami --face', () => {
   it('returns a face action', () => {
     expect(run('whoami --face', { profile, projects, history: [] }).action).toEqual({ type: 'face' });
   });
-  it('portrait text exists and uses the field glyph ramp', () => {
+  it('portrait text exists and uses only printable characters', () => {
     const txt = readFileSync('src/data/portrait-ascii.txt', 'utf8');
     const lines = txt.split('\n');
     expect(lines.length).toBeGreaterThan(30);
     expect(Math.max(...lines.map((l) => l.length))).toBeLessThanOrEqual(96);
     const used = new Set(txt.replace(/[\s]/g, ''));
-    for (const ch of used) expect(meta.ramp).toContain(ch);
+    for (const ch of used) expect(meta.chars).toContain(ch);
   });
 });

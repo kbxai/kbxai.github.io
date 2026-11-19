@@ -33,7 +33,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
     </div>
   </section>
 
-  <section id="work" class="block" aria-labelledby="work-title">
+  <section id="work" class="block lit" aria-labelledby="work-title">
     <div class="wrap">
       <h2 id="work-title" class="section-title" data-reveal>Selected work</h2>
       <p class="section-lede">Five projects, in the same order as my resume. Each page shows what I measured and what is still missing.</p>
@@ -43,7 +43,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
     </div>
   </section>
 
-  <section id="about" class="block" aria-labelledby="about-title">
+  <section id="about" class="block lit" aria-labelledby="about-title">
     <div class="wrap">
       <h2 id="about-title" class="section-title" data-reveal>About</h2>
       <div class="about">
@@ -71,7 +71,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
     </div>
   </section>
 
-  <section id="terminal" class="block" aria-labelledby="term-title">
+  <section id="terminal" class="block lit" aria-labelledby="term-title">
     <div class="wrap">
       <h2 id="term-title" class="section-title" data-reveal>Ask the site</h2>
       <p class="section-lede">
@@ -93,7 +93,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
     </div>
   </section>
 
-  <section id="contact" class="block contact" aria-labelledby="contact-title">
+  <section id="contact" class="block contact lit" aria-labelledby="contact-title">
     <div class="wrap">
       <h2 id="contact-title" class="section-title" data-reveal>Contact</h2>
       <p class="section-lede">Email is the fastest way to reach me. {sentence(profile.availability)}</p>
@@ -109,9 +109,29 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
 </Base>
 
 <style>
+  /* Light: one faint cyan light per section, placed behind the thing you look at there (the first project
+     figure, the toolkit, the terminal bar, the email), never a shape of its own.
+     Eased stops so it falls off like light, not like a disc. */
+  .lit { position: relative; isolation: isolate; overflow-x: clip; }
+  .lit::before {
+    content: ''; position: absolute; z-index: -1; pointer-events: none;
+    left: var(--gx); top: var(--gy); width: var(--gw); height: var(--gh); transform: translate(-50%, -50%);
+    background: radial-gradient(closest-side,
+      rgb(31 187 210 / var(--ga)) 0%, rgb(31 187 210 / calc(var(--ga) * 0.72)) 22%,
+      rgb(31 187 210 / calc(var(--ga) * 0.38)) 48%, rgb(31 187 210 / calc(var(--ga) * 0.12)) 74%, transparent 100%);
+  }
+  #work { --gx: 18%; --gy: 520px; --gw: 62vw; --gh: 760px; --ga: 0.06; }
+  #about { --gx: 82%; --gy: 52%; --gw: 46vw; --gh: 560px; --ga: 0.045; }
+  #terminal { --gx: 24%; --gy: 64%; --gw: 52vw; --gh: 420px; --ga: 0.06; }
+  #contact { --gx: 20%; --gy: 52%; --gw: 58vw; --gh: 520px; --ga: 0.07; }
+  @media (max-width: 860px) {
+    .lit::before { --gw: 120vw; }
+  }
+
   /* Hero: the name and the portrait are the one moment on the page */
   .hero { min-height: 100svh; display: grid; align-items: end; padding-top: 68px; overflow: clip; }
-  .art { position: absolute; top: 0; bottom: 0; right: 0; width: min(58vw, 980px); }
+  .art { position: absolute; top: clamp(44px, 7vh, 72px); bottom: 0; right: 0; width: min(58vw, 980px); }
+  /* the portrait looks left, towards the name: room in front of the face is in the image itself (photo_maps.py) */
   .art::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, var(--ink) 0%, transparent 22%), linear-gradient(0deg, var(--ink) 0%, transparent 18%); }
   .hero-copy { position: relative; width: 100%; padding-bottom: clamp(5rem, 12vh, 7rem); }
   .hero-copy > * { max-width: 40rem; }
@@ -131,7 +151,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
 
   @media (max-width: 860px) {
     .hero { min-height: 0; grid-template-rows: auto auto; padding-top: 60px; }
-    .art { position: relative; width: 100%; height: min(92vw, 520px); }
+    .art { position: relative; top: 0; width: 100%; height: min(112vw, 580px); }
     .art::after { background: linear-gradient(0deg, var(--ink) 0%, transparent 30%); }
     .hero-copy { margin-top: -4.5rem; padding-bottom: 1rem; }
   }
@@ -170,5 +190,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
 
 <script>
   import { maybeStartHero } from '../lib/hero-loader';
+  import { maybeStartWorks } from '../lib/works-loader';
   maybeStartHero();
+  maybeStartWorks();
 </script>
