@@ -10,9 +10,22 @@ interface Project {
 interface Props { project: Project }
 const { project: p } = Astro.props;
 const isLive = p.metric.label === 'live';
+// What each 3D figure shows. Only the spectrogram is real data; the rest say they are illustrations.
+const W3D: Record<string, string> = {
+  'interview-intelligence-ai': 'Illustration: a resume and a job description go in; a report with answers, ranked skill gaps and a prep plan comes out.',
+  'messy-mashup': 'Log-mel spectrogram of “Milenberg Joys” (US Air Force Band, public domain), the input the model reads.',
+  'llm-code-deployment-agent': 'Illustration: a brief becomes a page, the page goes up to a GitHub repo, and the live URL is polled.',
+  medsyncpro: 'Illustration: a second booking for a slot that is already taken is refused.',
+  'comment-category-prediction': 'Macro F1 of the three models in the write-up.',
+};
 ---
 <article class="row">
-  <div class="fig-col">{p.links.demo ? <ProjectShot slug={p.slug} demo={p.links.demo} title={p.title} /> : <ProjectFigure slug={p.slug} results={p.results} />}</div>
+  <div class="fig-col">
+    <div class="w3d" data-w3d={p.slug}>
+      <div class="fallback">{p.links.demo ? <ProjectShot slug={p.slug} demo={p.links.demo} title={p.title} /> : <ProjectFigure slug={p.slug} results={p.results} />}</div>
+    </div>
+    {W3D[p.slug] && <p class="w3d-cap" aria-hidden="true">{W3D[p.slug]}</p>}
+  </div>
   <div class="text">
     <p class="meta"><span>{p.context}</span><span class="dim">{p.dates}</span></p>
     <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
@@ -32,6 +45,19 @@ const isLive = p.metric.label === 'live';
 <style>
   .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.75rem, 5vw, 5rem); padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--line); align-items: center; }
   .fig-col { min-width: 0; }
+  /* 3D figure: same box as the plain figure, so nothing moves when it takes over */
+  .w3d { position: relative; aspect-ratio: 10 / 7; }
+  .fallback { height: 100%; }
+  .fallback > :global(*) { height: 100%; }
+  .w3d :global(.w3d-canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
+  .w3d:global(.w3d-on) :global(.w3d-canvas) { display: block; }
+  /* while the 3D figure is live, the plain figure stays in the accessibility tree but is not drawn */
+  .w3d:global(.w3d-on) .fallback { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .w3d :global(.w3d-label) { position: absolute; left: 0; top: 0; font: 400 var(--fs-xs)/1 var(--mono); color: var(--muted); white-space: nowrap; pointer-events: none; padding-bottom: 6px; display: none; }
+  .w3d:global(.w3d-on) :global(.w3d-label) { display: block; }
+  .w3d :global(.w3d-label.accent) { color: var(--accent); }
+  .w3d-cap { margin-top: 0.8rem; font-size: var(--fs-xs); color: var(--dim); max-width: 56ch; visibility: hidden; }
+  .fig-col:has(.w3d.w3d-on) .w3d-cap { visibility: visible; }
   .text { display: flex; flex-direction: column; gap: 0.9rem; min-width: 0; }
   .meta { display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem; font-size: var(--fs-sm); color: var(--muted); }
   h3 a { text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); }

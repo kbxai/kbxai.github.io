@@ -25,7 +25,9 @@ const ALT: Record<string, string> = {
 </figure>
 
 <style>
-  .shot { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--ink-2); transition: border-color var(--t-base) var(--ease); }
+  .shot { margin: 0; min-width: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--ink-2); transition: border-color var(--t-base) var(--ease); display: flex; flex-direction: column; }
+  .shot > a { flex: 1 1 auto; min-height: 0; }
+  .shot img { height: 100%; }
   .shot:hover { border-color: var(--line-2); }
   .bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--line); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
