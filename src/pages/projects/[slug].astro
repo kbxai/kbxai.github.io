@@ -19,7 +19,7 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
     <p class="back"><a class="link" href="/#work">All work</a></p>
     <header class="head">
       <p class="meta"><span class="n">{String(i + 1).padStart(2, '0')}</span><span>{p.context}</span><span class="dim">{p.dates}</span></p>
-      <h1 id="t" style={`view-transition-name: t-${p.slug}`}>{p.title}</h1>
+      <h1 id="t">{p.title}</h1>
       <p class="sum">{p.summary}</p>
       <p class="actions">
         {p.links.demo && <a class="btn solid" href={p.links.demo}>Open the live demo<Fragment set:html={arrow} /></a>}

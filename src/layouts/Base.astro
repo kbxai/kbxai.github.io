@@ -4,6 +4,7 @@ import '@fontsource/newsreader/latin-400-italic.css';
 import '@fontsource/geist-sans/latin-400.css';
 import '@fontsource/geist-sans/latin-500.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-700.css'; // the hero's glyph atlas is drawn at 700 (src/three/grid.ts); fetched only when it is used
 import '../styles/global.css';
 import profile from '../data/profile.json';
 import Hud from '../components/Hud.astro';
@@ -72,6 +73,12 @@ const [first, ...rest] = profile.name.split(' ');
       try {
         if (localStorage.getItem('kb.motion') === 'paused') document.documentElement.dataset.motion = 'paused';
       } catch (e) {}
+      // a paused visitor gets plain navigations: skip the cross-document view transition on both pages
+      var skipVT = function (e) {
+        if (e.viewTransition && document.documentElement.dataset.motion === 'paused') e.viewTransition.skipTransition();
+      };
+      window.addEventListener('pageswap', skipVT);
+      window.addEventListener('pagereveal', skipVT);
     </script>
   </head>
   <body>

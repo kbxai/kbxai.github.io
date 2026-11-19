@@ -16,7 +16,7 @@ const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="
   <div class="fig-col">{p.links.demo ? <ProjectShot slug={p.slug} demo={p.links.demo} title={p.title} /> : <ProjectFigure slug={p.slug} results={p.results} />}</div>
   <div class="text">
     <p class="meta"><span class="n">{n}</span><span>{p.context}</span><span class="dim">{p.dates}</span></p>
-    <h3><a href={`/projects/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a></h3>
+    <h3><a href={`/projects/${p.slug}/`}>{p.title}</a></h3>
     <p class="metric" aria-label={isLive ? 'Has a live demo' : `${p.metric.label} ${p.metric.value}`}>
       {isLive ? <><span class="live" aria-hidden="true"></span>Live demo</> : <><span class="v">{p.metric.value}</span> <span class="l">{p.metric.label}</span></>}
     </p>

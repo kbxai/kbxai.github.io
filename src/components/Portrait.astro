@@ -11,7 +11,9 @@ const [w, h] = meta.still;
 </div>
 <style>
   .portrait { position: relative; width: 100%; height: 100%; }
-  .portrait-still { position: absolute; inset: 2%; width: 96%; height: 96%; object-fit: contain; transition: opacity 900ms var(--ease); }
-  .portrait.live .portrait-still { opacity: 0; }
+  /* the still is captured from the live render at rest (scripts/portrait/capture_still.py), so the swap is
+     instant: a cross-fade would draw both copies of each glyph at once and flash brighter */
+  .portrait-still { position: absolute; inset: 2%; width: 96%; height: 96%; object-fit: contain; }
+  .portrait.live .portrait-still { visibility: hidden; }
   .portrait :global(canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 </style>
