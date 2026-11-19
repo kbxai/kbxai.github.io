@@ -94,7 +94,8 @@ code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--amber); }
 }
 @media (max-width: 400px) {
   .brand { font-size: var(--fs-md); }
-  .top nav { gap: 0.7rem; }
+  .top nav { gap: 0.6rem; }
+  .top nav a, .motion-toggle { font-size: 0.875rem; }
 }
 
 /* Buttons and links */
