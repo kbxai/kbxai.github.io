@@ -32,7 +32,7 @@ const isLive = p.metric.label === 'live';
     <div class="grid">
       <div class="facts">
         <dl class="kv">
-          <dt>Result</dt><dd>{isLive ? `Live ${p.metric.value}` : <span class="amber">{p.metric.label} {p.metric.value}</span>}</dd>
+          <dt>Result</dt><dd>{isLive ? `Live ${p.metric.value}` : <span class="accent">{p.metric.label} {p.metric.value}</span>}</dd>
           <dt>Stack</dt><dd>{p.stack.join(', ')}</dd>
           <dt>Context</dt><dd>{p.context}</dd>
           <dt>When</dt><dd>{p.dates}</dd>
@@ -84,11 +84,11 @@ const isLive = p.metric.label === 'live';
   section > :not(h2) { grid-column: 2; }
   .bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: 1.1rem; }
   .bullets li { padding-left: 1.4rem; position: relative; max-width: 60ch; }
-  .bullets li::before { content: ''; position: absolute; left: 0; top: 0.72em; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+  .bullets li::before { content: ''; position: absolute; left: 0; top: 0.72em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
   .note { margin-top: 1.5rem; font-size: var(--fs-sm); max-width: 60ch; }
   .next { display: flex; flex-direction: column; gap: 0.5rem; margin-top: clamp(4rem, 9vw, 7rem); padding: 2.5rem 0 0; border-top: 1px solid var(--line); text-decoration: none; }
   .next-title { font-family: var(--serif); font-size: var(--fs-xl); letter-spacing: -0.02em; line-height: 1.05; transition: color var(--t-fast) var(--ease); }
-  .next:hover .next-title { color: var(--amber); }
+  .next:hover .next-title { color: var(--accent); }
   @media (max-width: 860px) {
     .grid, section { grid-template-columns: 1fr; }
     section > :not(h2) { grid-column: 1; }

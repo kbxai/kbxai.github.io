@@ -62,13 +62,13 @@ const stage = (m: string) => (/final leaderboard/.test(m) ? 'leaderboard' : /val
   .s { font-family: var(--serif); font-size: var(--fs-lg); color: var(--paper); line-height: 1; }
   .bar { grid-column: 1 / -1; height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; }
   .bar span { display: block; height: 100%; width: calc(var(--v) * 100%); background: var(--dim); border-radius: inherit; }
-  .best .s { color: var(--amber); }
+  .best .s { color: var(--accent); }
   .best .m { color: var(--paper); }
-  .best .bar span { background: var(--amber); }
+  .best .bar span { background: var(--accent); }
   .steps { list-style: none; margin: auto 0 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
   .steps li { position: relative; padding: 0.7rem 0 0.7rem 2.1rem; color: var(--paper); font-size: var(--fs-sm); border-left: 1px solid var(--line-2); margin-left: 0.45rem; }
-  .steps li::before { content: ''; position: absolute; left: -5px; top: 1.05rem; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); border: 1px solid var(--amber); }
+  .steps li::before { content: ''; position: absolute; left: -5px; top: 1.05rem; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); border: 1px solid var(--accent); }
   .steps li:last-child { border-left-color: transparent; }
-  .steps li:last-child::before { background: var(--amber); }
+  .steps li:last-child::before { background: var(--accent); }
   .note { font-size: var(--fs-xs); color: var(--dim); }
 </style>

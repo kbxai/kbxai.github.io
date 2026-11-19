@@ -2,8 +2,8 @@
 // One full-screen WebGL2 pass reads public/field/maps.webp (one texel per cell: tone and normal, with the rim
 // light in a second block of rows below; made by scripts/portrait/relight.py) and picks a glyph per cell from the same measured ramp as the still image.
 // At rest the light faces the camera, so the frame matches the still exactly.
-// Intro: a light sweeps across the face. Pointer: the light follows the cursor; glyphs under it turn amber
-// and change in place. Scroll: glyphs scramble in place and fade.
+// Intro: a light sweeps across the face. Pointer: the light follows the cursor; glyphs under it take the accent colour
+// and change in place. Scroll: the face erodes down its own glyph ramp, top rows first.
 import meta from '../data/field-meta.json';
 import { scrollProgress } from './field-core';
 
@@ -24,8 +24,7 @@ uniform vec3 uLight;
 uniform float uH, uLit, uLensR, uTime, uScroll, uN;
 out vec4 o;
 
-const vec3 PAPER = vec3(0.937, 0.914, 0.875);
-const vec3 AMBER = vec3(0.965, 0.639, 0.278);
+uniform vec3 uPaper, uAccent; // from the --portrait-paper / --portrait-accent CSS variables (the theme)
 
 float hash(vec2 c) { return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
 
@@ -50,9 +49,9 @@ vec2 relit(vec4 m) {
 
 vec3 tint(float t, float rim, float f) {
   float e = clamp((t - 0.04) / 0.74, 0.0, 1.0);
-  vec3 col = PAPER * (0.12 + 0.88 * e * e * (3.0 - 2.0 * e));
-  col = mix(col, AMBER, min(1.0, rim * 0.55));
-  return mix(col, AMBER, clamp((f - 1.0) * 0.9, 0.0, 0.35));
+  vec3 col = uPaper * (0.12 + 0.88 * e * e * (3.0 - 2.0 * e));
+  col = mix(col, uAccent, min(1.0, rim * 0.55));
+  return mix(col, uAccent, clamp((f - 1.0) * 0.9, 0.0, 0.35));
 }
 
 void main() {
@@ -80,12 +79,13 @@ void main() {
   float edge = min(min(gc.x, uGrid.x - gc.x), min(gc.y, uGrid.y - gc.y));
   vec2 dir = normalize(gc - vec2(uGrid.x * 0.5, uGrid.y * 0.42) + 1e-4);
   float side = 1.0 + uLit * 0.9 * max(0.0, dot(dir, normalize(uLight.xy + 1e-4))) * length(uLight.xy);
-  glow += mix(PAPER, AMBER, 0.35) * sm.g * 0.075 * side;
-  glow += AMBER * sm.b * 0.03 * smoothstep(0.0, 5.0, edge) * side;
+  glow += mix(uPaper, uAccent, 0.35) * sm.g * 0.075 * side;
+  glow += uAccent * sm.b * 0.03 * smoothstep(0.0, 5.0, edge) * side;
 
-  float fade = 1.0;
+  // scroll: the face erodes down its own glyph ramp, top rows first. Every glyph stays in its cell.
   float h = hash(cf);
-  if (uScroll > 0.0) fade = 1.0 - smoothstep(0.15, 1.0, uScroll + (h - 0.5) * 0.3);
+  float e = uScroll > 0.0 ? clamp(uScroll * 1.7 - (gc.y / uGrid.y) * 0.7, 0.0, 1.0) : 0.0;
+  float fade = 1.0 - e;
   glow *= fade;
 
   vec4 m = cellAt(c);
@@ -99,12 +99,13 @@ void main() {
   vec2 cc = (cf + 0.5) * uCell;
   float lens = smoothstep(1.0, 0.0, length(cc - (uMouse - uOrigin)) / uLensR);
   if (lens > 0.08) g = mod(g + floor(uTime * 12.0 + h * 40.0), uN);
-  if (uScroll > 0.0 && hash(cf + 7.3) < uScroll * 1.4) g = mod(floor(uTime * 9.0 + h * 40.0), uN);
+  g -= floor(e * (uN + 1.0));
+  if (g < 0.0) { o = vec4(glow, max(glow.r, max(glow.g, glow.b))); return; }
 
   vec2 local = p - cf * uCell;
   float a = texelFetch(uAtlas, ivec2(int(g) * int(uCell.x) + int(local.x), int(local.y)), 0).a;
-  vec3 col = mix(tint(t, m.a, r.y), AMBER * 1.12, lens);
-  float alpha = a * clamp(0.35 + 1.1 * t + 0.4 * m.a, 0.0, 1.0) * fade;
+  vec3 col = mix(tint(t, m.a, r.y), uAccent * 1.12, lens);
+  float alpha = a * clamp(0.35 + 1.1 * t + 0.4 * m.a, 0.0, 1.0) * (1.0 - e * 0.4);
   vec3 rgb = col * alpha + glow * (1.0 - alpha);
   o = vec4(rgb, max(alpha, max(rgb.r, max(rgb.g, rgb.b))));
 }`;
@@ -165,7 +166,16 @@ export async function startField(host: HTMLElement, opts: Options): Promise<() =
   const u = {
     maps: U('uMaps'), atlas: U('uAtlas'), origin: U('uOrigin'), cell: U('uCell'), grid: U('uGrid'), mouse: U('uMouse'),
     light: U('uLight'), h: U('uH'), lit: U('uLit'), lensR: U('uLensR'), time: U('uTime'), scroll: U('uScroll'), n: U('uN'),
+    paper: U('uPaper'), accent: U('uAccent'),
   };
+  // portrait colours come from the theme, so the glyphs match the page
+  const css = getComputedStyle(document.documentElement);
+  const rgb = (name: string, fallback: [number, number, number]): [number, number, number] => {
+    const m = css.getPropertyValue(name).trim().match(/^#([0-9a-f]{6})$/i);
+    return m ? [0, 2, 4].map((k) => parseInt(m[1]!.slice(k, k + 2), 16) / 255) as [number, number, number] : fallback;
+  };
+  gl.uniform3f(u.paper, ...rgb('--portrait-paper', [0.957, 0.961, 0.961]));
+  gl.uniform3f(u.accent, ...rgb('--portrait-accent', [0.122, 0.733, 0.824]));
 
   const vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);

@@ -18,24 +18,24 @@ const pathD = (cmds, ox, oy) =>
   }).join(' ');
 const allD = (ox, oy) => mono.shapes.map((sh) => [sh.outer, ...sh.holes].map((p) => pathD(p, ox, oy)).join(' ')).join(' ');
 await writeFile(new URL('../public/favicon.svg', import.meta.url),
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${W}"><rect width="100%" height="100%" rx="1.2" fill="#0b0a12"/><path d="${allD(pad, (W - H) / 2)}" fill="#f6a347" fill-rule="evenodd"/></svg>`);
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${W}"><rect width="100%" height="100%" rx="1.2" fill="#050606"/><path d="${allD(pad, (W - H) / 2)}" fill="#1fbbd2" fill-rule="evenodd"/></svg>`);
 
 // 2. OG image 1200x630: the portrait still on the right, name and proof on the left (new palette)
 const still = await sharp(toPath(new URL('../public/field/still.webp', import.meta.url))).resize({ height: 630 }).toBuffer();
 const text = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <defs><linearGradient id="f" x1="0" x2="1"><stop offset="0.42" stop-color="#0b0a12"/><stop offset="0.62" stop-color="#0b0a12" stop-opacity="0"/></linearGradient></defs>
+  <defs><linearGradient id="f" x1="0" x2="1"><stop offset="0.42" stop-color="#050606"/><stop offset="0.62" stop-color="#050606" stop-opacity="0"/></linearGradient></defs>
   <rect width="1200" height="630" fill="url(#f)"/>
-  <g font-family="Georgia, 'Times New Roman', serif" fill="#efe9df">
+  <g font-family="Georgia, 'Times New Roman', serif" fill="#f4f5f5">
     <text x="64" y="250" font-size="104" letter-spacing="-3">Kartik</text>
     <text x="124" y="352" font-size="104" letter-spacing="-3">Bajaj</text>
   </g>
   <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
-    <text x="66" y="430" font-size="27" fill="#a8a2b0">AI/LLM Engineer internship, IIT Madras</text>
-    <text x="66" y="474" font-size="27" fill="#f6a347">Macro F1 0.954 and three live LLM and ML demos</text>
-    <text x="66" y="566" font-size="22" fill="#8a8494">kbxai.github.io</text>
+    <text x="66" y="430" font-size="27" fill="#a6aeb1">AI/LLM Engineer internship, IIT Madras</text>
+    <text x="66" y="474" font-size="27" fill="#1fbbd2">Macro F1 0.954 and three live LLM and ML demos</text>
+    <text x="66" y="566" font-size="22" fill="#848e92">kbxai.github.io</text>
   </g>
 </svg>`;
-await sharp({ create: { width: 1200, height: 630, channels: 3, background: '#0b0a12' } })
+await sharp({ create: { width: 1200, height: 630, channels: 3, background: '#050606' } })
   .composite([{ input: still, left: 1200 - 520, top: 0 }, { input: Buffer.from(text), left: 0, top: 0 }])
   .png({ compressionLevel: 9 })
   .toFile(toPath(new URL('../public/og.png', import.meta.url)));

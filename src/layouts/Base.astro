@@ -46,7 +46,7 @@ const nav = [
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0b0a12" />
+    <meta name="theme-color" content="#050606" />
     <meta name="color-scheme" content="dark" />
     <link rel="preload" href={serif400} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sans400} as="font" type="font/woff2" crossorigin />
@@ -81,7 +81,7 @@ const nav = [
     <a class="skip" href="#main">Skip to content</a>
     <header class="top" id="top">
       <div class="wrap">
-        <a class="brand" href="/">{profile.name}</a>
+        <a class="brand" href="/" aria-label={`${profile.name}, home`}><span class="kbx">KBx</span><span class="ai">AI</span></a>
         <nav aria-label="Main">
           {nav.map((n) => (
             <a class={n.cls} href={n.href} aria-current={n.match && path === n.match ? 'page' : undefined}>{n.label}</a>

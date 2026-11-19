@@ -24,7 +24,7 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
         <span class="line indent"><span class="rise" style="--d:100ms">{rest.join(' ')}</span></span>
       </h1>
       <p class="lead rise" style="--d:160ms">
-        I build LLM apps and noise-robust ML models. My audio classifier scored a Macro F1 of{' '}<span class="amber">{mm.metric.value}</span>{' '}in a private IITM Kaggle competition, and three of my projects have live demos.
+        I build LLM apps and noise-robust ML models. My audio classifier scored a Macro F1 of{' '}<span class="accent">{mm.metric.value}</span>{' '}in a private IITM Kaggle competition, and three of my projects have live demos.
       </p>
       <div class="actions rise" style="--d:220ms">
         <a class="btn solid" href="/resume/">Read my resume</a>
@@ -153,17 +153,17 @@ const sentence = (s: string) => s.replaceAll(' | ', '. ') + '.';
   .ask { display: grid; gap: 1.1rem; max-width: 52rem; }
   .ask[hidden] { display: none; }
   .ask-bar { display: flex; align-items: center; gap: 0.9rem; width: 100%; padding: 1.05rem 1.2rem; border: 1px solid var(--line-2); border-radius: 14px; background: var(--ink-2); color: var(--dim); font: 400 var(--fs-sm)/1.2 var(--mono); text-align: left; cursor: text; transition: border-color var(--t-fast) var(--ease); }
-  .ask-bar:hover { border-color: var(--amber); }
-  .ask-bar .who { color: var(--amber); white-space: nowrap; }
+  .ask-bar:hover { border-color: var(--accent); }
+  .ask-bar .who { color: var(--accent); white-space: nowrap; }
   .ask-bar .ph { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ask-bar kbd, .section-lede kbd { font: 400 var(--fs-xs)/1 var(--mono); color: var(--muted); border: 1px solid var(--line-2); border-radius: 6px; padding: 0.22rem 0.45rem; }
   .ask-try { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .ask-try button { font: 400 var(--fs-xs)/1 var(--mono); color: var(--muted); background: transparent; border: 1px solid var(--line-2); border-radius: 999px; padding: 0.55rem 0.85rem; cursor: pointer; transition: color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease); }
-  .ask-try button:hover { color: var(--paper); border-color: var(--amber); }
+  .ask-try button:hover { color: var(--paper); border-color: var(--accent); }
   @media (max-width: 520px) { .ask-bar .who { display: none; } }
 
   /* Contact */
-  .mail { display: inline-block; font-family: var(--serif); font-size: var(--fs-2xl); letter-spacing: -0.02em; line-height: 1.1; text-decoration: none; margin-bottom: 3rem; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 2px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); overflow-wrap: anywhere; }
+  .mail { display: inline-block; font-family: var(--serif); font-size: var(--fs-2xl); letter-spacing: -0.02em; line-height: 1.1; text-decoration: none; margin-bottom: 3rem; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 2px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); overflow-wrap: anywhere; }
   .mail:hover { background-size: 100% 2px; color: var(--paper); }
   .contact .kv { max-width: 860px; border-top: 1px solid var(--line); padding-top: 2rem; }
 </style>

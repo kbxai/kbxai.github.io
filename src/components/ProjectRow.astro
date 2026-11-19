@@ -34,11 +34,11 @@ const isLive = p.metric.label === 'live';
   .fig-col { min-width: 0; }
   .text { display: flex; flex-direction: column; gap: 0.9rem; min-width: 0; }
   .meta { display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem; font-size: var(--fs-sm); color: var(--muted); }
-  h3 a { text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); }
+  h3 a { text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat; transition: background-size var(--t-base) var(--ease), color var(--t-fast) var(--ease); }
   h3 a:hover { color: var(--paper); background-size: 100% 1px; }
   .metric { display: flex; align-items: baseline; gap: 0.5rem; color: var(--muted); font-size: var(--fs-sm); }
-  .metric .v { font-family: var(--serif); font-size: var(--fs-xl); color: var(--amber); line-height: 1; }
-  .live { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); align-self: center; }
+  .metric .v { font-family: var(--serif); font-size: var(--fs-xl); color: var(--accent); line-height: 1; }
+  .live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); align-self: center; }
   .sum { max-width: 52ch; }
   .stack { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0; }
   .stack li { font-family: var(--mono); font-size: var(--fs-xs); color: var(--muted); border: 1px solid var(--line-2); border-radius: 999px; padding: 0.2rem 0.65rem; }

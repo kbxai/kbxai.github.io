@@ -38,7 +38,7 @@ export function initLab(): void {
     cols = Math.floor(w / cellW);
     g.font = `700 ${Math.floor(cellH * 0.95)}px "JetBrains Mono", monospace`;
     g.textBaseline = 'top';
-    g.fillStyle = '#13111b';
+    g.fillStyle = '#0c0f10';
     g.fillRect(0, 0, w, h);
   };
   sizeCanvas();
@@ -67,13 +67,13 @@ export function initLab(): void {
     // shift waterfall left by one column, draw the newest column at the right edge
     g.drawImage(canvas, -Math.ceil(cellW), 0);
     const x = (cols - 1) * cellW;
-    g.fillStyle = '#13111b';
+    g.fillStyle = '#0c0f10';
     g.fillRect(x - 1, 0, cellW + 2, canvas.height);
     for (let b = 0; b < BANDS; b++) {
       const v = Math.min(1, bands[b]! * 1.15);
       if (v < 0.06) continue;
       const y = canvas.height - (b + 1) * cellH; // low frequencies at the bottom
-      g.fillStyle = v > 0.82 ? '#f6a347' : '#efe9df';
+      g.fillStyle = v > 0.82 ? '#1fbbd2' : '#f4f5f5';
       g.shadowColor = g.fillStyle;
       g.shadowBlur = v > 0.5 ? 6 : 0;
       g.globalAlpha = 0.35 + 0.65 * v;

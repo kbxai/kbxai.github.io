@@ -1,14 +1,18 @@
-/* Design tokens. Contrast on --ink (WCAG 2.2): paper 16.3:1, muted 7.9:1, dim 5.5:1, amber 9.6:1. Ink on amber 9.6:1. */
+/* Design tokens, taken from the KBxAI logo (black, white, cyan). Contrast on --ink (WCAG 2.2):
+   paper 18.6:1, muted 9.0:1, dim 6.1:1, accent 8.8:1 (5.3:1 or better on every surface). Ink on accent 8.8:1. */
 :root {
-  --ink: #0b0a12;
-  --ink-2: #13111b;
-  --ink-3: #1a1724;
-  --line: #2a2636;
-  --line-2: #3b3548;
-  --paper: #efe9df;
-  --muted: #a8a2b0;
-  --dim: #8a8494;
-  --amber: #f6a347;
+  --ink: #050606;
+  --ink-2: #0c0f10;
+  --ink-3: #141819;
+  --line: #1f2527;
+  --line-2: #2c3437;
+  --paper: #f4f5f5;
+  --muted: #a6aeb1;
+  --dim: #848e92;
+  --accent: #1fbbd2;
+  /* the glyph portrait's light colours (src/three/grid.ts reads these): mono white, cyan stays in the UI */
+  --portrait-paper: var(--paper);
+  --portrait-accent: var(--paper);
   --error: #ff7b72;
 
   --serif: 'Newsreader', 'Iowan Old Style', Georgia, serif;
@@ -46,18 +50,18 @@ body {
 }
 main, header, footer { position: relative; z-index: 1; }
 
-::selection { background: var(--amber); color: var(--ink); }
+::selection { background: var(--accent); color: var(--ink); }
 a { color: inherit; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); text-underline-offset: 0.22em; text-decoration-thickness: 1px; transition: color var(--t-fast) var(--ease), text-decoration-color var(--t-fast) var(--ease); }
-a:hover { color: var(--amber); text-decoration-color: var(--amber); }
-:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 3px; }
+a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
 h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
 h2 { font-size: var(--fs-2xl); letter-spacing: -0.03em; }
 h3 { font-size: var(--fs-xl); }
 p { margin: 0; text-wrap: pretty; }
-code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--amber); }
+code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--accent); }
 
-.skip { position: absolute; left: 12px; top: -64px; z-index: 100; background: var(--amber); color: var(--ink); padding: 10px 14px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+.skip { position: absolute; left: 12px; top: -64px; z-index: 100; background: var(--accent); color: var(--ink); padding: 10px 14px; border-radius: 999px; font-weight: 600; text-decoration: none; }
 .skip:focus { top: 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
@@ -65,16 +69,20 @@ code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--amber); }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
 .muted { color: var(--muted); }
 .dim { color: var(--dim); }
-.amber { color: var(--amber); }
+.accent { color: var(--accent); }
 
 /* Header */
 .top { position: fixed; inset: 0 0 auto 0; z-index: 40; border-bottom: 1px solid transparent; transition: background-color var(--t-base) var(--ease), border-color var(--t-base) var(--ease); }
-.top.scrolled { background: rgba(11, 10, 18, 0.94); border-bottom-color: var(--line); }
+.top.scrolled { background: rgba(5, 6, 6, 0.94); border-bottom-color: var(--line); }
 .top .wrap { display: flex; align-items: center; gap: 0.5rem 2rem; height: 68px; }
-.brand { font-family: var(--serif); font-size: var(--fs-lg); letter-spacing: -0.01em; text-decoration: none; margin-right: auto; white-space: nowrap; }
+.brand { display: inline-flex; align-items: baseline; font-size: var(--fs-lg); line-height: 1; text-decoration: none; margin-right: auto; white-space: nowrap; color: var(--paper); }
+/* the KBxAI wordmark from the logo: KBx in white mono, AI in the accent */
+.brand .kbx { font: 700 1em/1 var(--mono); letter-spacing: -0.02em; }
+.brand .ai { font: 600 1.06em/1 var(--sans); color: var(--accent); letter-spacing: 0.01em; }
+.brand:hover { color: var(--paper); }
 .top nav { display: flex; align-items: center; gap: 0.25rem 1.6rem; }
 .top nav a { color: var(--muted); text-decoration: none; font-size: var(--fs-sm); position: relative; padding: 4px 0; }
-.top nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--amber); transform: scaleX(0); transform-origin: left; }
+.top nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; }
 .top nav a:hover, .top nav a[aria-current='page'] { color: var(--paper); }
 .top nav a[aria-current='page']::after { transform: scaleX(1); }
 @media (hover: hover) and (pointer: fine) {
@@ -100,14 +108,14 @@ code, kbd { font-family: var(--mono); font-size: 0.86em; color: var(--amber); }
 
 /* Buttons and links */
 .btn { display: inline-flex; align-items: center; gap: 0.6em; padding: 0.8em 1.35em; border-radius: 999px; border: 1px solid var(--line-2); color: var(--paper); text-decoration: none; font-weight: 600; font-size: var(--fs-sm); line-height: 1; transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease); }
-.btn:hover { border-color: var(--amber); color: var(--amber); }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn.solid { background: var(--paper); color: var(--ink); border-color: var(--paper); }
-.btn.solid:hover { background: var(--amber); border-color: var(--amber); color: var(--ink); }
+.btn.solid:hover { background: var(--accent); border-color: var(--accent); color: var(--ink); }
 .btn.ghost { background: transparent; }
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 .btn svg, .link svg { width: 0.9em; height: 0.9em; flex: none; }
 .link { display: inline-flex; align-items: center; gap: 0.4em; text-decoration: none; border-bottom: 1px solid var(--line-2); padding-bottom: 3px; white-space: nowrap; transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
-.link:hover { border-color: var(--amber); }
+.link:hover { border-color: var(--accent); }
 @media (hover: hover) and (pointer: fine) {
   .btn svg, .link svg { transition: transform var(--t-base) var(--ease); }
   .btn:hover svg, .link:hover svg { transform: translate(2px, -2px); }
@@ -136,7 +144,7 @@ section { position: relative; scroll-margin-top: 72px; }
 table.data { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
 table.data th, table.data td { border-bottom: 1px solid var(--line); padding: 0.75rem 0.5rem 0.75rem 0; text-align: left; vertical-align: top; }
 table.data th { color: var(--dim); font-weight: 400; font-size: var(--fs-xs); }
-table.data td.num { font-family: var(--serif); font-size: var(--fs-lg); color: var(--amber); white-space: nowrap; text-align: right; }
+table.data td.num { font-family: var(--serif); font-size: var(--fs-lg); color: var(--accent); white-space: nowrap; text-align: right; }
 
 /* Footer */
 footer.site { margin-top: clamp(5rem, 10vw, 8rem); border-top: 1px solid var(--line); padding: 2.2rem 0 5rem; color: var(--dim); font-size: var(--fs-sm); }
