@@ -1,6 +1,0 @@
----
-interface Props { cmd: string; id?: string; as?: 'h2' | 'p'; title?: string }
-const { cmd, id, title } = Astro.props;
----
-<p class="prompt" aria-hidden="true"><span class="user">visitor@kbxai</span>:<span class="muted">~</span>$ <span class="cmd">{cmd}</span></p>
-{title && <h2 id={id}>{title}</h2>}
